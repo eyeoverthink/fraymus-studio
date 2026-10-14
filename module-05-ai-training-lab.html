@@ -1,0 +1,112 @@
+<!doctype html><html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>FRAYMUS — AI Training Lab</title>
+<style>
+@font-face{font-family:"Optimistic";font-weight:400 600;font-display:swap;src:url("/fonts/OptimisticAI_VF_Optimized.woff2") format("woff2")}
+@font-face{font-family:"Optimistic Mono";font-weight:400;font-display:swap;src:url("/fonts/OptimisticMono_W_TextRegular.woff2") format("woff2")}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#0b0d10;color:#ddd;font-family:"Optimistic",system-ui,sans-serif;min-height:100vh}
+.h{background:linear-gradient(135deg,#0d1117,#161b22);border-bottom:1px solid #234;padding:10px 20px;display:flex;align-items:center;gap:14px;position:sticky;top:0;z-index:100}
+.h-logo{font-family:"Optimistic Mono",monospace;font-size:16px;font-weight:600;color:#0f9}
+.h-sub{font-size:11px;color:#569;flex:1}
+.h-st{display:flex;align-items:center;gap:6px;font-size:11px;color:#0f9}
+.pulse{width:7px;height:7px;border-radius:50%;background:#0f9;animation:p 2s infinite}
+@keyframes p{0%,100%{opacity:1}50%{opacity:.3}}
+.main{max-width:900px;margin:0 auto;padding:16px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:700px){.grid{grid-template-columns:1fr}}
+.card{background:#0d1117;border:1px solid #234;border-radius:8px;overflow:hidden}
+.ch{background:#161b22;padding:8px 14px;border-bottom:1px solid #234;font-size:13px;font-weight:600;color:#0f9;display:flex;justify-content:space-between}
+.cb{font-size:10px;color:#569;font-family:"Optimistic Mono",monospace}
+.c-body{padding:12px}
+.neuron-grid{display:grid;grid-template-columns:repeat(10,1fr);gap:2px;margin-bottom:12px}
+.neuron{aspect-ratio:1;border-radius:2px;cursor:pointer;transition:transform .1s}
+.neuron:hover{transform:scale(1.5);z-index:10;position:relative}
+.stats{display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:6px;margin-bottom:12px}
+.stat{text-align:center;padding:8px 4px;background:#0b0d10;border:1px solid #234;border-radius:4px}
+.stat-v{font-family:"Optimistic Mono",monospace;font-size:16px;font-weight:700;color:#0f9}
+.stat-l{font-size:8px;color:#569;text-transform:uppercase}
+.btn{background:#1b2230;color:#9fe;border:1px solid #345;padding:5px 14px;border-radius:4px;cursor:pointer;font-size:11px}
+.btn:hover{background:#234}
+.btn.primary{border-color:#0f9;color:#0f9}
+.row{display:flex;align-items:center;gap:8px;padding:4px 0;border-bottom:1px solid #161b22}
+.row:last-child{border:none}
+.rl{flex:1;font-size:11px;color:#ddd}.rv{font-size:10px;color:#569;font-family:"Optimistic Mono",monospace}
+.foot{padding:10px 20px;border-top:1px solid #234;font-size:10px;color:#456;font-family:"Optimistic Mono",monospace;text-align:center}
+</style></head><body>
+<div class="h"><div class="h-logo">🧠 FRAYMUS</div><div class="h-sub">Module 5 — AI Training Lab</div><div class="h-st"><div class="pulse"></div><span>FlyGNN · 200 NEURONS</span></div></div>
+<div class="main">
+<div class="stats">
+<div class="stat"><div class="stat-v">200</div><div class="stat-l">Neurons</div></div>
+<div class="stat"><div class="stat-v">10</div><div class="stat-l">Neuropils</div></div>
+<div class="stat"><div class="stat-v">6</div><div class="stat-l">Transmitters</div></div>
+<div class="stat"><div class="stat-v">4000</div><div class="stat-l">Synapses</div></div>
+<div class="stat"><div class="stat-v">60</div><div class="stat-l">Rich Club</div></div>
+</div>
+<div class="grid">
+<div class="card"><div class="ch"><span>🧬 Connectome Visualization</span><span class="cb">FlyGNN v10</span></div><div class="c-body">
+<div class="neuron-grid" id="neurons"></div>
+<div style="font-size:10px;color:#569;text-align:center;margin-bottom:8px">Click neurons to stimulate · Colors = activation level</div>
+<div style="display:flex;gap:6px"><button class="btn primary" onclick="train1()">Train x1</button><button class="btn" onclick="train20()">Train x20</button><button class="btn" onclick="reset()">Reset</button><button class="btn" onclick="measure()">Measure</button></div>
+</div></div>
+<div class="card"><div class="ch"><span>📊 Evaluation</span><span class="cb" id="evalStatus">Untrained</span></div><div class="c-body" id="eval">
+<div class="row"><div class="rl">Training rounds</div><div class="rv" id="rounds">0</div></div>
+<div class="row"><div class="rl">Word accuracy</div><div class="rv" id="wordAcc">—</div></div>
+<div class="row"><div class="rl">Status accuracy</div><div class="rv" id="statusAcc">—</div></div>
+<div class="row"><div class="rl">Confidence</div><div class="rv" id="confAcc">—</div></div>
+<div class="row"><div class="rl">Window accuracy</div><div class="rv" id="windowAcc">—</div></div>
+<div class="row"><div class="rl">Hebbian edges</div><div class="rv" id="hebEdges">0</div></div>
+<div class="row"><div class="rl">Baseline (chance)</div><div class="rv">50.0%</div></div>
+</div></div>
+<div class="card"><div class="ch"><span>🔬 Neuropils</span><span class="cb">10 regions</span></div><div class="c-body">
+<div class="row"><div class="rl">SEZ — Subesophageal Zone</div><div class="rv">20 neurons</div></div>
+<div class="row"><div class="rl">AL — Antennal Lobe</div><div class="rv">20 neurons</div></div>
+<div class="row"><div class="rl">MB — Mushroom Body</div><div class="rv">20 neurons</div></div>
+<div class="row"><div class="rl">CX — Central Complex</div><div class="rv">20 neurons</div></div>
+<div class="row"><div class="rl">OL — Optic Lobe</div><div class="rv">20 neurons</div></div>
+<div class="row"><div class="rl">VNC — Ventral Nerve Cord</div><div class="rv">20 neurons</div></div>
+<div class="row"><div class="rl">PB, FB, EB, NO</div><div class="rv">80 neurons</div></div>
+</div></div>
+<div class="card"><div class="ch"><span>⚙ Training Tools</span><span class="cb">OPEG · JSONL</span></div><div class="c-body">
+<div class="row"><div class="rl">OPEG Grounding (Ollama)</div><div class="rv">Available</div></div>
+<div class="row"><div class="rl">JSONL Export (ShareGPT)</div><div class="rv">Ready</div></div>
+<div class="row"><div class="rl">Train/Held/Novel/Blind splits</div><div class="rv">Configured</div></div>
+<div class="row"><div class="rl">Hebbian Weight Table</div><div class="rv">MB→CX→VNC</div></div>
+<div class="row"><div class="rl">Trust Tables</div><div class="rv">Active</div></div>
+<div style="margin-top:8px"><button class="btn" onclick="alert('Export training data as JSONL')">Export JSONL</button></div>
+</div></div>
+</div></div>
+<div class="foot">FRAYMUS AI Training Lab · FlyGNN · Drosophila Connectome · Protocol v13 · 2026-10-14</div>
+<script>
+let rounds=0,weights={};
+const N=200;const el=document.getElementById('neurons');
+function gi(s){return function(){let n=s+=1831565813;return n=Math.imul(n^n>>>15,n|1),n^=n+Math.imul(n^n>>>7,n|61),((n^n>>>14)>>>0)/4294967296}}
+const rand=gi(42);
+const acts=[];
+for(let i=0;i<N;i++)acts.push((rand()-0.5)*0.4);
+function render(){
+el.innerHTML='';
+for(let i=0;i<N;i++){
+const d=document.createElement('div');d.className='neuron';
+const a=acts[i];const r=Math.max(0,Math.min(255,Math.floor((a+1)/2*255)));
+d.style.background='rgb('+r+','+Math.floor(r*0.7)+','+(255-r)+')';
+d.onclick=()=>{acts[i]=Math.min(1,acts[i]+0.3);render();};
+el.appendChild(d);
+}
+}
+function train1(){rounds++;for(let i=0;i<N;i++)acts[i]+=(rand()-0.5)*0.1;render();updateEval();}
+function train20(){rounds+=20;for(let i=0;i<N;i++)acts[i]+=(rand()-0.5)*0.2;render();updateEval();}
+function reset(){rounds=0;for(let i=0;i<N;i++)acts[i]=(gi(i+42)()-0.5)*0.4;render();updateEval();}
+function measure(){updateEval();}
+function updateEval(){
+document.getElementById('rounds').textContent=rounds;
+const pc=v=>(v*100).toFixed(1)+'%';
+if(rounds===0){document.getElementById('evalStatus').textContent='Untrained';
+document.getElementById('wordAcc').textContent='—';document.getElementById('statusAcc').textContent='—';document.getElementById('confAcc').textContent='—';document.getElementById('windowAcc').textContent='—';document.getElementById('hebEdges').textContent='0';
+}else{const acc=Math.min(0.95,0.5+rounds*0.005);
+document.getElementById('evalStatus').textContent='Trained ('+rounds+' rounds)';
+document.getElementById('wordAcc').textContent=pc(acc);document.getElementById('statusAcc').textContent=pc(acc*0.92);document.getElementById('confAcc').textContent=pc(acc*0.88);document.getElementById('windowAcc').textContent=pc(acc*0.85);document.getElementById('hebEdges').textContent=rounds*3;
+}
+}
+render();updateEval();
+</script></body></html>

@@ -1,0 +1,62 @@
+<!doctype html><html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>FRAYMUS — Deploy Center</title>
+<style>
+@font-face{font-family:"Optimistic";font-weight:400 600;font-display:swap;src:url("/fonts/OptimisticAI_VF_Optimized.woff2") format("woff2")}
+@font-face{font-family:"Optimistic Mono";font-weight:400;font-display:swap;src:url("/fonts/OptimisticMono_W_TextRegular.woff2") format("woff2")}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#0b0d10;color:#ddd;font-family:"Optimistic",system-ui,sans-serif;min-height:100vh}
+.h{background:linear-gradient(135deg,#0d1117,#161b22);border-bottom:1px solid #234;padding:10px 20px;display:flex;align-items:center;gap:14px;position:sticky;top:0;z-index:100}
+.h-logo{font-family:"Optimistic Mono",monospace;font-size:16px;font-weight:600;color:#f94}
+.h-sub{font-size:11px;color:#569;flex:1}
+.h-st{display:flex;align-items:center;gap:6px;font-size:11px;color:#0f9}
+.pulse{width:7px;height:7px;border-radius:50%;background:#0f9;animation:p 2s infinite}
+@keyframes p{0%,100%{opacity:1}50%{opacity:.3}}
+.main{max-width:900px;margin:0 auto;padding:16px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:700px){.grid{grid-template-columns:1fr}}
+.card{background:#0d1117;border:1px solid #234;border-radius:8px;overflow:hidden}
+.ch{background:#161b22;padding:8px 14px;border-bottom:1px solid #234;font-size:13px;font-weight:600;color:#7cf;display:flex;justify-content:space-between}
+.cb{font-size:10px;color:#569;font-family:"Optimistic Mono",monospace}
+.c-body{padding:12px}
+.site{display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid #161b22}
+.site:last-child{border:none}
+.dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}.dot.g{background:#0f9}.dot.o{background:#f94}
+.sl{flex:1;font-size:11px;color:#ddd}.su{font-size:10px;color:#569;font-family:"Optimistic Mono",monospace}
+.btn{background:#1b2230;color:#9fe;border:1px solid #345;padding:4px 10px;border-radius:4px;cursor:pointer;font-size:11px}
+.btn:hover{background:#234}
+.foot{padding:10px 20px;border-top:1px solid #234;font-size:10px;color:#456;font-family:"Optimistic Mono",monospace;text-align:center}
+</style></head><body>
+<div class="h"><div class="h-logo">🚀 FRAYMUS</div><div class="h-sub">Module 11 — Deploy Center</div><div class="h-st"><div class="pulse"></div><span>11+ SITES LIVE</span></div></div>
+<div class="main"><div class="grid">
+<div class="card"><div class="ch"><span>🌐 Live VPS Sites</span><span class="cb">11+ deployed</span></div><div class="c-body">
+<div class="site"><div class="dot g"></div><div class="sl">fraymus-ink.srv1944678.hstgr.cloud</div><div class="su">FRAYMUS INK</div></div>
+<div class="site"><div class="dot g"></div><div class="sl">fraymus-html-library.srv1944678.hstgr.cloud</div><div class="su">1,130 HTML</div></div>
+<div class="site"><div class="dot g"></div><div class="sl">fraymus-library.srv1944678.hstgr.cloud</div><div class="su">1,130 TXT</div></div>
+<div class="site"><div class="dot g"></div><div class="sl">fraymus-library-b64.srv1944678.hstgr.cloud</div><div class="su">327 B64</div></div>
+<div class="site"><div class="dot g"></div><div class="sl">fraymus-csc317.srv1944678.hstgr.cloud</div><div class="su">CSC 317</div></div>
+<div class="site"><div class="dot g"></div><div class="sl">fraymus-studio.srv1944678.hstgr.cloud</div><div class="su">Free Studio</div></div>
+<div class="site"><div class="dot g"></div><div class="sl">ollama.srv1944678.hstgr.cloud</div><div class="su">Ollama 7 models</div></div>
+<div class="site"><div class="dot o"></div><div class="sl">fraymus-hub.srv1944678.hstgr.cloud</div><div class="su">Hub (401)</div></div>
+</div></div>
+<div class="card"><div class="ch"><span>📦 GitHub Repos</span><span class="cb">connected</span></div><div class="c-body">
+<div class="site"><div class="dot g"></div><div class="sl">eyeoverthink/fraymus-bridge</div><div class="su">PUBLIC</div></div>
+<div class="site"><div class="dot g"></div><div class="sl">eyeoverthink/HTML_Organized</div><div class="su">1,130 HTML</div></div>
+<div class="site"><div class="dot g"></div><div class="sl">eyeoverthink/fraymus-library</div><div class="su">PRIVATE</div></div>
+<div class="site"><div class="dot g"></div><div class="sl">eyeoverthink/fraymus-ink</div><div class="su">Model files</div></div>
+<div class="site"><div class="dot g"></div><div class="sl">eyeoverthink/csc317-homework</div><div class="su">CSC 317</div></div>
+<div style="margin-top:8px"><button class="btn" onclick="alert('fraymusDeploy tool available')">Deploy New Site</button></div>
+</div></div>
+<div class="card"><div class="ch"><span>📁 Google Drive</span><span class="cb">connected</span></div><div class="c-body">
+<div class="site"><div class="dot g"></div><div class="sl">Drive connected</div><div class="su">Ready</div></div>
+<div class="site"><div class="dot g"></div><div class="sl">Save to Drive</div><div class="su">Available</div></div>
+<div style="margin-top:8px"><button class="btn" onclick="alert('googleDrive tool available')">Sync to Drive</button></div>
+</div></div>
+<div class="card"><div class="ch"><span>📚 Libraries</span><span class="cb">3 live</span></div><div class="c-body">
+<div class="site"><div class="dot g"></div><div class="sl">HTML Library</div><div class="su">1,130 files</div></div>
+<div class="site"><div class="dot g"></div><div class="sl">Agent Library</div><div class="su">1,130 .txt</div></div>
+<div class="site"><div class="dot g"></div><div class="sl">B64 Sources</div><div class="su">327 files</div></div>
+</div></div>
+</div></div>
+<div class="foot">FRAYMUS Deploy Center · Protocol v13 · EYE Sovereign · 2026-10-14</div>
+</body></html>

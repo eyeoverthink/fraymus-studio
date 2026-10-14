@@ -1,0 +1,187 @@
+<!doctype html><html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>FRAYMUS — Transmutation Editor</title>
+<style>
+@font-face{font-family:"Optimistic";font-weight:400 600;font-display:swap;src:url("/fonts/OptimisticAI_VF_Optimized.woff2") format("woff2")}
+@font-face{font-family:"Optimistic Mono";font-weight:400;font-display:swap;src:url("/fonts/OptimisticMono_W_TextRegular.woff2") format("woff2")}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#0b0d10;color:#ddd;font-family:"Optimistic",system-ui,sans-serif;height:100vh;display:flex;flex-direction:column;overflow:hidden}
+.h{background:linear-gradient(135deg,#0d1117,#161b22);border-bottom:1px solid #234;padding:10px 20px;display:flex;align-items:center;gap:14px}
+.h-logo{font-family:"Optimistic Mono",monospace;font-size:16px;font-weight:600;color:#7cf}
+.h-sub{font-size:11px;color:#569;flex:1}
+.h-st{display:flex;align-items:center;gap:6px;font-size:11px;color:#0f9}
+.pulse{width:7px;height:7px;border-radius:50%;background:#0f9;animation:p 2s infinite}
+@keyframes p{0%,100%{opacity:1}50%{opacity:.3}}
+.toolbar{background:#161b22;border-bottom:1px solid #234;padding:6px 16px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.btn{background:#1b2230;color:#9fe;border:1px solid #345;padding:5px 12px;border-radius:4px;cursor:pointer;font-size:12px;font-family:"Optimistic",sans-serif;transition:all .15s}
+.btn:hover{background:#233;background-color:#234}
+.btn.primary{background:#0d1117;border-color:#7cf;color:#7cf}
+.btn.primary:hover{background:#161b22}
+.spacer{flex:1}
+.lbl{font-size:11px;color:#569;font-family:"Optimistic Mono",monospace}
+.split{display:grid;grid-template-columns:1fr 1fr;flex:1;overflow:hidden}
+@media(max-width:800px){.split{grid-template-columns:1fr;grid-template-rows:1fr 1fr}}
+.pane{display:flex;flex-direction:column;border-right:1px solid #234;overflow:hidden}
+.pane:last-child{border-right:none}
+.pane-h{background:#0d1117;padding:6px 12px;border-bottom:1px solid #234;display:flex;align-items:center;justify-content:space-between}
+.pane-t{font-size:12px;font-weight:600;color:#7cf;text-transform:uppercase;letter-spacing:.5px}
+.pane-b{font-size:10px;color:#569;font-family:"Optimistic Mono",monospace}
+.editor{flex:1;background:#0b0d10;color:#ddd;padding:12px;font-family:"Optimistic Mono",monospace;font-size:13px;line-height:1.5;border:none;outline:none;resize:none;width:100%;tab-size:2}
+.editor::placeholder{color:#345}
+.output{flex:1;overflow-y:auto;padding:12px;font-family:"Optimistic Mono",monospace;font-size:11px;line-height:1.4}
+.out-section{margin-bottom:14px}
+.out-label{font-size:10px;color:#7cf;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;display:flex;align-items:center;gap:6px}
+.out-value{background:#0d1117;border:1px solid #234;border-radius:4px;padding:8px;word-break:break-all;font-size:10px;color:#bbb;max-height:180px;overflow-y:auto}
+.out-value.emoji{font-size:16px;line-height:1.8}
+.out-value.dna{color:#0f9}
+.out-value.hash{color:#f94}
+.verified{color:#0f9;font-size:10px}
+.failed{color:#f66;font-size:10px}
+.statusbar{background:#0d1117;border-top:1px solid #234;padding:4px 16px;display:flex;gap:16px;font-size:10px;color:#569;font-family:"Optimistic Mono",monospace}
+.sb-item{display:flex;align-items:center;gap:4px}
+.sb-dot{width:6px;height:6px;border-radius:50%}
+.sb-dot.green{background:#0f9}.sb-dot.orange{background:#f94}
+.select{background:#0d1117;color:#9fe;border:1px solid #345;padding:4px 8px;border-radius:3px;font-size:11px;font-family:"Optimistic Mono",monospace}
+.tabs{display:flex;gap:0}
+.tab{padding:4px 10px;font-size:11px;color:#569;cursor:pointer;border-bottom:2px solid transparent;font-family:"Optimistic Mono",monospace}
+.tab.active{color:#7cf;border-bottom-color:#7cf}
+</style></head><body>
+<div class="h">
+<div class="h-logo">⬡ FRAYMUS</div>
+<div class="h-sub">Module 1 — Transmutation Editor</div>
+<div class="h-st"><div class="pulse"></div><span>LIVE WASM</span></div>
+</div>
+<div class="toolbar">
+<button class="btn primary" onclick="transmute()">⚡ Transmute</button>
+<button class="btn" onclick="verify()">✓ Verify</button>
+<button class="btn" onclick="copyOutput()">📋 Copy</button>
+<button class="btn" onclick="clearAll()">Clear</button>
+<div class="spacer"></div>
+<span class="lbl">INPUT:</span>
+<select class="select" id="modeSelect" onchange="loadExample()">
+<option value="custom">Custom</option>
+<option value="arith">PUSH 10 PUSH 5 ADD PRINT HALT</option>
+<option value="text">Hello World</option>
+<option value="code">function phi(){return 1.618}</option>
+<option value="json">{"name":"FRAYMUS","v":13}</option>
+</select>
+</div>
+<div class="split">
+<div class="pane">
+<div class="pane-h"><div class="pane-t">Source Code</div><div class="pane-b" id="srcStats">0 bytes</div></div>
+<textarea class="editor" id="input" placeholder="Type or paste code here... then click Transmute" spellcheck="false">PUSH 10 PUSH 5 ADD PRINT HALT</textarea>
+</div>
+<div class="pane">
+<div class="pane-h">
+<div class="tabs">
+<div class="tab active" onclick="switchTab(this,'wasm')">WASM</div>
+<div class="tab" onclick="switchTab(this,'emoji')">Emoji</div>
+<div class="tab" onclick="switchTab(this,'dna')">DNA</div>
+<div class="tab" onclick="switchTab(this,'hash')">Hash</div>
+</div>
+<div class="pane-b" id="outStats">—</div>
+</div>
+<div class="output" id="output">
+<div style="color:#456;text-align:center;padding:40px 0">Click "Transmute" to convert code → WASM + Emoji + DNA</div>
+</div>
+</div>
+</div>
+<div class="statusbar">
+<div class="sb-item"><div class="sb-dot green"></div><span>Engine: FRAYMUS Comms v13</span></div>
+<div class="sb-item"><span id="sbSize">Size: —</span></div>
+<div class="sb-item"><span id="sbHash">SHA-256: —</span></div>
+<div class="sb-item"><span id="sbVerify">Verified: —</span></div>
+<div class="spacer"></div>
+<div class="sb-item">Protocol v13 · Seal phi^75 · EYE Sovereign</div>
+</div>
+<script>
+let currentTab='wasm',lastResult=null;
+const input=document.getElementById('input');
+const output=document.getElementById('output');
+function loadExample(){const sel=document.getElementById('modeSelect');input.value=sel.value==='custom'?'PUSH 10 PUSH 5 ADD PRINT HALT':sel.value;updateStats();}
+function updateStats(){const b=new TextEncoder().encode(input.value);document.getElementById('srcStats').textContent=b.length+' bytes';}
+input.addEventListener('input',updateStats);
+
+// SHA-256 using SubtleCrypto
+async function sha256(text){const buf=new TextEncoder().encode(text);const h=await crypto.subtle.digest('SHA-256',buf);return Array.from(new Uint8Array(h),b=>b.toString(16).padStart(2,'0')).join('');}
+
+// FRAYMUS transmutation (client-side implementation)
+async function transmuteText(text){
+  const bytes=new TextEncoder().encode(text);
+  const size=bytes.length;
+  const hash=await sha256(text);
+  // WASM: magic + version + custom section with fraymus.data
+  const magic=[0x00,0x61,0x73,0x6D,0x01,0x00,0x00,0x00];
+  const marker=new TextEncoder().encode('fraymus.data');
+  const payload=bytes;
+  const sectionLen=1+marker.length+1+payload.length; // name_len + name + data_len + data
+  const wasmBytes=[...magic,0x00,sectionLen&0xFF,...leb128(sectionLen),0x0C,...marker,size&0xFF,...leb128(size),...payload];
+  const wasmHex=wasmBytes.map(b=>b.toString(16).padStart(2,'0')).join(' ');
+  // Emoji: each byte → 🧩 + variation selectors (U+FE00-U+FE0F, U+E0100-U+E01EF)
+  let emoji='';
+  for(const b of bytes){
+    emoji+='🧩';
+    // Encode byte as two variation selectors
+    const hi=(b>>4)&0xF,lo=b&0xF;
+    emoji+=String.fromCodePoint(0xFE00+hi);
+    emoji+=String.fromCodePoint(0xFE00+lo);
+  }
+  // DNA: binary → base pairs (00=C,01=A,10=G,11=T)
+  let dna='';
+  for(const b of bytes){
+    for(let i=7;i>=0;i-=2){
+      const pair=(b>>i)&3;
+      dna+=['CC','CA','CG','CT'][pair];
+    }
+  }
+  // GC content
+  const g=dna.split('').filter(c=>c==='G'||c==='C').length;
+  const gc=(g/dna.length*100).toFixed(2);
+  // Emoji round-trip: decode emoji back to bytes
+  let emojiRT=true;
+  try{const parts=emoji.match(/🧩(.{2})/g)||[];const dec=parts.map(p=>{const vs1=p.codePointAt(2)-0xFE00;const vs2=p.codePointAt(3)-0xFE00;return vs1*16+vs2;});emojiRT=dec.every((v,i)=>v===bytes[i]);}catch(e){emojiRT=false;}
+  // DNA round-trip
+  let dnaRT=true;
+  try{const pairs=dna.match(/.{2}/g)||[];const dec=pairs.map(p=>({'CC':0,'CA':1,'CG':2,'CT':3})[p]);let bi=0;const buf=[];for(let i=0;i<dec.length;i+=4){let b=0;for(let j=0;j<4;j++)b=(b<<2)|dec[i+j];buf.push(b&0xFF);}dnaRT=buf.every((v,i)=>v===bytes[i]);}catch(e){dnaRT=false;}
+  return{input:text,size,sha256:hash,wasmHex,wasmSize:wasmBytes.length,emoji,emojiGlyphs:emoji.length/2,dna,dnaBases:dna.length,gc,dnaRoundTrip:dnaRT,emojiRoundTrip:emojiRT,verified:emojiRT&&dnaRT};
+}
+
+async function transmute(){
+  const text=input.value;
+  if(!text.trim()){output.innerHTML='<div style="color:#f66;text-align:center;padding:20px">Input is empty</div>';return;}
+  output.innerHTML='<div style="color:#569;text-align:center;padding:20px">Transmuting...</div>';
+  lastResult=await transmuteText(text);
+  document.getElementById('sbSize').textContent='Size: '+lastResult.size+' bytes';
+  document.getElementById('sbHash').textContent='SHA-256: '+lastResult.sha256.slice(0,16)+'...';
+  document.getElementById('sbVerify').innerHTML=lastResult.verified?'<span class="verified">✓ Verified</span>':'<span class="failed">✗ Failed</span>';
+  document.getElementById('outStats').textContent='WASM:'+lastResult.wasmSize+'B Emoji:'+lastResult.emojiGlyphs+' DNA:'+lastResult.dnaBases+'bp';
+  renderTab(currentTab);
+}
+
+function renderTab(tab){
+  if(!lastResult){output.innerHTML='<div style="color:#456;text-align:center;padding:40px 0">Click "Transmute" to convert code → WASM + Emoji + DNA</div>';return;}
+  currentTab=tab;
+  const r=lastResult;
+  if(tab==='wasm'){
+    output.innerHTML='<div class="out-section"><div class="out-label">⚡ WASM Binary ('+r.wasmSize+' bytes)</div><div class="out-value">'+r.wasmHex+'</div></div><div class="out-section"><div class="out-label">📦 Size</div><div class="out-value">'+r.size+' bytes input → '+r.wasmSize+' bytes WASM ('+((1-r.wasmSize/(r.size||1))*100).toFixed(1)+'% overhead)</div></div>';
+  }else if(tab==='emoji'){
+    output.innerHTML='<div class="out-section"><div class="out-label">🧩 Emoji Encoding ('+r.emojiGlyphs+' glyphs)</div><div class="out-value emoji">'+r.emoji+'</div></div><div class="out-section"><div class="out-label">🔄 Round-trip</div><div class="out-value">'+(r.emojiRoundTrip?'✓ Verified — emoji decodes to original':'✗ MISMATCH')+'</div></div>';
+  }else if(tab==='dna'){
+    output.innerHTML='<div class="out-section"><div class="out-label">🧬 DNA Encoding ('+r.dnaBases+' bases, GC '+r.gc+'%)</div><div class="out-value dna">'+r.dna+'</div></div><div class="out-section"><div class="out-label">🔄 Round-trip</div><div class="out-value">'+(r.dnaRoundTrip?'✓ Verified — DNA decodes to original':'✗ MISMATCH')+'</div></div>';
+  }else if(tab==='hash'){
+    output.innerHTML='<div class="out-section"><div class="out-label"># SHA-256 Hash</div><div class="out-value hash">'+r.sha256+'</div></div><div class="out-section"><div class="out-label">📊 Stats</div><div class="out-value">Input: '+r.size+' bytes<br>WASM: '+r.wasmSize+' bytes<br>Emoji: '+r.emojiGlyphs+' glyphs<br>DNA: '+r.dnaBases+' bases (GC '+r.gc+'%)<br>Verified: '+(r.verified?'✓ ALL PASS':'✗ FAILED')+'</div></div>';
+  }
+}
+
+function verify(){if(!lastResult){transmute();return;}renderTab(currentTab);}
+
+function switchTab(el,tab){document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));el.classList.add('active');renderTab(tab);}
+
+function copyOutput(){if(!lastResult)return;const text=JSON.stringify(lastResult,null,2);navigator.clipboard.writeText(text).then(()=>{const old=document.querySelector('.pane-b').textContent;document.getElementById('outStats').textContent='COPIED!';setTimeout(()=>document.getElementById('outStats').textContent=old,1500);});}
+
+function clearAll(){input.value='';lastResult=null;output.innerHTML='<div style="color:#456;text-align:center;padding:40px 0">Click "Transmute" to convert code → WASM + DNA</div>';document.getElementById('sbSize').textContent='Size: —';document.getElementById('sbHash').textContent='SHA-256: —';document.getElementById('sbVerify').textContent='Verified: —';document.getElementById('outStats').textContent='—';updateStats();}
+
+function leb128(n){const r=[];do{let b=n&0x7F;n>>=7;if(n)r.push(b|0x80);else r.push(b);}while(n);return r;}
+
+updateStats();
+</script></body></html>

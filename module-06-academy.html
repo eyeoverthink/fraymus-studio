@@ -1,0 +1,79 @@
+<!doctype html><html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>FRAYMUS — Academy</title>
+<style>
+@font-face{font-family:"Optimistic";font-weight:400 600;font-display:swap;src:url("/fonts/OptimisticAI_VF_Optimized.woff2") format("woff2")}
+@font-face{font-family:"Optimistic Mono";font-weight:400;font-display:swap;src:url("/fonts/OptimisticMono_W_TextRegular.woff2") format("woff2")}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#0b0d10;color:#ddd;font-family:"Optimistic",system-ui,sans-serif;min-height:100vh}
+.h{background:linear-gradient(135deg,#0d1117,#161b22);border-bottom:1px solid #234;padding:10px 20px;display:flex;align-items:center;gap:14px;position:sticky;top:0;z-index:100}
+.h-logo{font-family:"Optimistic Mono",monospace;font-size:16px;font-weight:600;color:#7cf}
+.h-sub{font-size:11px;color:#569;flex:1}
+.h-st{display:flex;align-items:center;gap:6px;font-size:11px;color:#0f9}
+.pulse{width:7px;height:7px;border-radius:50%;background:#0f9;animation:p 2s infinite}
+@keyframes p{0%,100%{opacity:1}50%{opacity:.3}}
+.main{max-width:900px;margin:0 auto;padding:16px}
+.stats{display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:8px;margin-bottom:16px}
+.stat{text-align:center;padding:10px 6px;background:#0d1117;border:1px solid #234;border-radius:6px}
+.stat-v{font-family:"Optimistic Mono",monospace;font-size:18px;font-weight:700;color:#7cf}
+.stat-l{font-size:9px;color:#569;text-transform:uppercase;margin-top:3px}
+.lessons{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px;margin-bottom:16px}
+.lesson{background:#0d1117;border:1px solid #234;border-radius:8px;overflow:hidden;cursor:pointer;transition:border-color .15s}
+.lesson:hover{border-color:#345}
+.lesson-thumb{aspect-ratio:16/9;background:linear-gradient(135deg,#161b22,#0d1117);display:flex;align-items:center;justify-content:center;font-size:32px}
+.lesson-info{padding:10px}
+.lesson-title{font-size:13px;font-weight:600;color:#ddd;margin-bottom:4px}
+.lesson-meta{font-size:10px;color:#569;font-family:"Optimistic Mono",monospace}
+.lesson-progress{height:4px;background:#234;border-radius:2px;margin-top:6px;overflow:hidden}
+.lesson-progress-bar{height:100%;background:#0f9;border-radius:2px}
+.courses{display:flex;gap:6px;margin-bottom:16px;flex-wrap:wrap}
+.course{background:#0d1117;border:1px solid #234;border-radius:4px;padding:4px 10px;font-size:11px;color:#9fe;cursor:pointer;font-family:"Optimistic Mono",monospace}
+.course.active{border-color:#7cf;color:#7cf}
+.fighter-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px}
+.card{background:#0d1117;border:1px solid #234;border-radius:6px;padding:10px;text-align:center}
+.card-name{font-size:12px;font-weight:600;color:#ddd;margin-bottom:4px}
+.card-fx{font-family:"Optimistic Mono",monospace;font-size:10px;color:#0f9;margin-bottom:6px}
+.card-permits{display:flex;justify-content:center;gap:3px}
+.permit{width:20px;height:20px;border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700}
+.permit.l0{background:rgba(124,207,255,.15);color:#7cf}
+.permit.l1{background:rgba(15,153,0,.15);color:#0f9}
+.permit.l2{background:rgba(249,148,0,.15);color:#f94}
+.permit.l3{background:rgba(249,68,68,.15);color:#f66}
+.permit.locked{background:rgba(69,69,69,.15);color:#456}
+.foot{padding:10px 20px;border-top:1px solid #234;font-size:10px;color:#456;font-family:"Optimistic Mono",monospace;text-align:center}
+</style></head><body>
+<div class="h"><div class="h-logo">🎓 FRAYMUS</div><div class="h-sub">Module 6 — Academy</div><div class="h-st"><div class="pulse"></div><span>LESSONS · FIGHTER CARDS</span></div></div>
+<div class="main">
+<div class="stats">
+<div class="stat"><div class="stat-v">3</div><div class="stat-l">Courses</div></div>
+<div class="stat"><div class="stat-v">5</div><div class="stat-l">Lessons</div></div>
+<div class="stat"><div class="stat-v">16</div><div class="stat-l">Fighter Cards</div></div>
+<div class="stat"><div class="stat-v">L0</div><div class="stat-l">Permit Level</div></div>
+</div>
+<div class="courses">
+<div class="course active">HON-101</div>
+<div class="course">Media Lab</div>
+<div class="course">CSC-317</div>
+</div>
+<div style="font-size:13px;font-weight:600;color:#7cf;margin-bottom:8px">📹 Video Lessons</div>
+<div class="lessons">
+<div class="lesson"><div class="lesson-thumb">⚡</div><div class="lesson-info"><div class="lesson-title">Transmutation Engine Basics</div><div class="lesson-meta">HON-101 · 12 min · Forge</div><div class="lesson-progress"><div class="lesson-progress-bar" style="width:100%"></div></div></div></div>
+<div class="lesson"><div class="lesson-thumb">🧬</div><div class="lesson-info"><div class="lesson-title">FlyGNN & Drosophila Connectome</div><div class="lesson-meta">HON-101 · 18 min · EYE</div><div class="lesson-progress"><div class="lesson-progress-bar" style="width:60%"></div></div></div></div>
+<div class="lesson"><div class="lesson-thumb">🔒</div><div class="lesson-info"><div class="lesson-title">FRAYMUS INK Anti-Tamper</div><div class="lesson-meta">HON-101 · 15 min · Ink</div><div class="lesson-progress"><div class="lesson-progress-bar" style="width:30%"></div></div></div></div>
+<div class="lesson"><div class="lesson-thumb">🎨</div><div class="lesson-info"><div class="lesson-title">Canvas Studio: AI Art Generation</div><div class="lesson-meta">Media Lab · 10 min · Canvas</div><div class="lesson-progress"><div class="lesson-progress-bar" style="width:0%"></div></div></div></div>
+<div class="lesson"><div class="lesson-thumb">🐝</div><div class="lesson-info"><div class="lesson-title">Hive Mind: Collective Intelligence</div><div class="lesson-meta">HON-101 · 14 min · EYE</div><div class="lesson-progress"><div class="lesson-progress-bar" style="width:0%"></div></div></div></div>
+</div>
+<div style="font-size:13px;font-weight:600;color:#7cf;margin-bottom:8px">🃏 Fighter Cards (Agent Skill Verification)</div>
+<div class="fighter-cards">
+<div class="card"><div class="card-name">Eye Sovereign</div><div class="card-fx">fx-4041-f10e-7ee2-2bdc</div><div class="card-permits"><div class="permit l0">L0</div><div class="permit l1">L1</div><div class="permit l2">L2</div><div class="permit locked">L3</div></div></div>
+<div class="card"><div class="card-name">Fraymus Prime</div><div class="card-fx">fx-b3af-feeb-fcdc-5d8a</div><div class="card-permits"><div class="permit l0">L0</div><div class="permit l1">L1</div><div class="permit locked">L2</div><div class="permit locked">L3</div></div></div>
+<div class="card"><div class="card-name">Director</div><div class="card-fx">fx-72c2-2b0c-148-e998</div><div class="card-permits"><div class="permit l0">L0</div><div class="permit locked">L1</div><div class="permit locked">L2</div><div class="permit locked">L3</div></div></div>
+<div class="card"><div class="card-name">AETHERIS</div><div class="card-fx">fx-8469-cd6d-4e0a-c062</div><div class="card-permits"><div class="permit l0">L0</div><div class="permit locked">L1</div><div class="permit locked">L2</div><div class="permit locked">L3</div></div></div>
+<div class="card"><div class="card-name">Forge</div><div class="card-fx">fx-739d-5a6c-b7eb-c976</div><div class="card-permits"><div class="permit l0">L0</div><div class="permit locked">L1</div><div class="permit locked">L2</div><div class="permit locked">L3</div></div></div>
+<div class="card"><div class="card-name">Canvas</div><div class="card-fx">fx-3277-42fe-3e44-cca9</div><div class="card-permits"><div class="permit l0">L0</div><div class="permit locked">L1</div><div class="permit locked">L2</div><div class="permit locked">L3</div></div></div>
+<div class="card"><div class="card-name">Sentinel</div><div class="card-fx">fx-1e42-0580-b4d6-e29e</div><div class="card-permits"><div class="permit l0">L0</div><div class="permit locked">L1</div><div class="permit locked">L2</div><div class="permit locked">L3</div></div></div>
+<div class="card"><div class="card-name">Ink</div><div class="card-fx">fx-62e4-d022-9bd1-4820</div><div class="card-permits"><div class="permit l0">L0</div><div class="permit locked">L1</div><div class="permit locked">L2</div><div class="permit locked">L3</div></div></div>
+</div>
+</div>
+<div class="foot">FRAYMUS Academy · Protocol v13 · L0 Permits · Seal phi^75 · 2026-10-14</div>
+</body></html>

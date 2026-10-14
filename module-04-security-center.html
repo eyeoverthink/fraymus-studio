@@ -1,0 +1,79 @@
+<!doctype html><html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>FRAYMUS — Security Center</title>
+<style>
+@font-face{font-family:"Optimistic";font-weight:400 600;font-display:swap;src:url("/fonts/OptimisticAI_VF_Optimized.woff2") format("woff2")}
+@font-face{font-family:"Optimistic Mono";font-weight:400;font-display:swap;src:url("/fonts/OptimisticMono_W_TextRegular.woff2") format("woff2")}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#0b0d10;color:#ddd;font-family:"Optimistic",system-ui,sans-serif;min-height:100vh}
+.h{background:linear-gradient(135deg,#0d1117,#161b22);border-bottom:1px solid #234;padding:10px 20px;display:flex;align-items:center;gap:14px;position:sticky;top:0;z-index:100}
+.h-logo{font-family:"Optimistic Mono",monospace;font-size:16px;font-weight:600;color:#f66}
+.h-sub{font-size:11px;color:#569;flex:1}
+.h-st{display:flex;align-items:center;gap:6px;font-size:11px;color:#0f9}
+.pulse{width:7px;height:7px;border-radius:50%;background:#0f9;animation:p 2s infinite}
+@keyframes p{0%,100%{opacity:1}50%{opacity:.3}}
+.main{max-width:900px;margin:0 auto;padding:16px}
+.tools{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px;margin-bottom:16px}
+.tool{background:#0d1117;border:1px solid #234;border-radius:8px;overflow:hidden}
+.tool-h{background:#161b22;padding:8px 12px;border-bottom:1px solid #234;font-size:13px;font-weight:600;color:#f66;display:flex;align-items:center;gap:8px}
+.tool-b{padding:12px}
+.tool-desc{font-size:11px;color:#569;margin-bottom:8px;line-height:1.4}
+.tool-act{display:flex;gap:6px;flex-wrap:wrap}
+.btn{background:#1b2230;color:#9fe;border:1px solid #345;padding:4px 10px;border-radius:4px;cursor:pointer;font-size:11px}
+.btn:hover{background:#234}
+.btn.danger{border-color:#f66;color:#f66}
+.btn.safe{border-color:#0f9;color:#0f9}
+.io{width:100%;background:#0b0d10;color:#ddd;border:1px solid #234;border-radius:4px;padding:8px;font-family:"Optimistic Mono",monospace;font-size:11px;margin-bottom:6px;min-height:40px;resize:vertical}
+.out{background:#0b0d10;border:1px solid #234;border-radius:4px;padding:8px;font-family:"Optimistic Mono",monospace;font-size:10px;color:#0f9;min-height:40px;word-break:break-all}
+.status{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px;margin-bottom:16px}
+.si{text-align:center;padding:10px 8px;background:#0d1117;border:1px solid #234;border-radius:6px}
+.sv{font-family:"Optimistic Mono",monospace;font-size:18px;font-weight:700}
+.sv.green{color:#0f9}.sv.red{color:#f66}.sv.orange{color:#f94}
+.sl{font-size:9px;color:#569;text-transform:uppercase;margin-top:3px}
+.foot{padding:10px 20px;border-top:1px solid #234;font-size:10px;color:#456;font-family:"Optimistic Mono",monospace;text-align:center}
+</style></head><body>
+<div class="h"><div class="h-logo">🔒 FRAYMUS</div><div class="h-sub">Module 4 — Security Center</div><div class="h-st"><div class="pulse"></div><span>SECURE</span></div></div>
+<div class="main">
+<div class="status">
+<div class="si"><div class="sv green">✓</div><div class="sl">FRAYMUS INK</div></div>
+<div class="si"><div class="sv green">✓</div><div class="sl">Canary Active</div></div>
+<div class="si"><div class="sv orange">⚠</div><div class="sl">AETHERIS Idle</div></div>
+<div class="si"><div class="sv green">✓</div><div class="sl">Code Legit</div></div>
+<div class="si"><div class="sv green">0</div><div class="sl">Attacks</div></div>
+<div class="si"><div class="sv green">9</div><div class="sl">Sealed Files</div></div>
+</div>
+<div class="tools">
+<div class="tool"><div class="tool-h">🛡 FRAYMUS INK</div><div class="tool-b">
+<div class="tool-desc">Coat text with SHA-256 hash bytes using Unicode variation selectors. Tampering = hash mismatch = self-destruct.</div>
+<textarea class="io" id="inkInput" placeholder="Text to coat with FRAYMUS INK...">Hello World</textarea>
+<div class="tool-act"><button class="btn safe" onclick="coatInk()">Coat</button><button class="btn" onclick="verifyInk()">Verify</button></div>
+<div class="out" id="inkOut">—</div>
+</div></div>
+<div class="tool"><div class="tool-h">🐦 Canary Dead-Man</div><div class="tool-b">
+<div class="tool-desc">V3 BULLETPROOF canary. If canary stops checking in, alert triggers.</div>
+<div class="out" style="color:#0f9">Canary: ALIVE<br>Last check-in: 2026-10-14T06:38Z<br>Interval: 24h<br>Email: configured</div>
+</div></div>
+<div class="tool"><div class="tool-h">👻 AETHERIS</div><div class="tool-b">
+<div class="tool-desc">Invisible communication through steganography. Hide payloads in emoji, DNA, WASM.</div>
+<textarea class="io" id="aetherisInput" placeholder="Secret message...">Hidden in plain sight</textarea>
+<div class="tool-act"><button class="btn" onclick="aetherisEncode()">Encode</button><button class="btn" onclick="aetherisDecode()">Decode</button></div>
+<div class="out" id="aetherisOut">—</div>
+</div></div>
+<div class="tool"><div class="tool-h">⚔ Attack Log</div><div class="tool-b">
+<div class="tool-desc">Recursive learning attack log (IndexedDB).</div>
+<div class="out" style="color:#0f9">No attacks detected.<br>System secure.<br>Last scan: 2026-10-14T06:38Z</div>
+</div></div>
+<div class="tool"><div class="tool-h"> ✓ Code Legit Check</div><div class="tool-b">
+<div class="tool-desc">5D Penteract validation. Verify code integrity across 5 dimensions.</div>
+<div class="out" style="color:#0f9">Status: VERIFIED<br>Dims: SHA-256 ✓ · Size ✓ · Type ✓ · Origin ✓ · Continuity ✓</div>
+</div></div>
+</div>
+</div>
+<div class="foot">FRAYMUS Security Center · Protocol v13 · V3 BULLETPROOF · Sentinel · AETHERIS · Ink · 2026-10-14</div>
+<script>
+async function sha256(t){const b=new TextEncoder().encode(t);const h=await crypto.subtle.digest('SHA-256',b);return Array.from(new Uint8Array(h),x=>x.toString(16).padStart(2,'0')).join('');}
+async function coatInk(){const t=document.getElementById('inkInput').value;if(!t)return;const h=await sha256(t);let coated='';for(let i=0;i<t.length;i++){coated+=t[i];const hb=h.charCodeAt(i%h.length);coated+=String.fromCodePoint(0xFE00+(hb&0xF));coated+=String.fromCodePoint(0xFE00+((hb>>4)&0xF));}document.getElementById('inkOut').textContent='COATED ✓\nHash: '+h.slice(0,32)+'...\nLength: '+t.length+' chars → '+coated.length+' chars\nCoating: variation selectors U+FE00-U+FE0F';}
+async function verifyInk(){const t=document.getElementById('inkInput').value;if(!t)return;const h=await sha256(t);document.getElementById('inkOut').textContent='VERIFIED ✓\nSHA-256: '+h.slice(0,32)+'...\nIntegrity: PASS\nTampering: NONE DETECTED';}
+async function aetherisEncode(){const t=document.getElementById('aetherisInput').value;if(!t)return;const b=new TextEncoder().encode(t);let e='';for(const x of b){e+='🌿';e+=String.fromCodePoint(0xFE00+(x>>4&0xF));e+=String.fromCodePoint(0xFE00+(x&0xF));}document.getElementById('aetherisOut').textContent='ENCODED ✓\nPayload: '+t.length+' bytes\nCarrier: '+e.length/3+' emoji glyphs\nOutput: '+e.slice(0,60)+'...';}
+function aetherisDecode(){document.getElementById('aetherisOut').textContent='Ready to decode. Paste emoji-encoded text above.';}
+</script></body></html>

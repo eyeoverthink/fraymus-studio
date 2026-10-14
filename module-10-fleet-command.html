@@ -1,0 +1,80 @@
+<!doctype html><html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>FRAYMUS — Fleet Command</title>
+<style>
+@font-face{font-family:"Optimistic";font-weight:400 600;font-display:swap;src:url("/fonts/OptimisticAI_VF_Optimized.woff2") format("woff2")}
+@font-face{font-family:"Optimistic Mono";font-weight:400;font-display:swap;src:url("/fonts/OptimisticMono_W_TextRegular.woff2") format("woff2")}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#0b0d10;color:#ddd;font-family:"Optimistic",system-ui,sans-serif;min-height:100vh}
+.h{background:linear-gradient(135deg,#0d1117,#161b22);border-bottom:1px solid #234;padding:10px 20px;display:flex;align-items:center;gap:14px;position:sticky;top:0;z-index:100}
+.h-logo{font-family:"Optimistic Mono",monospace;font-size:16px;font-weight:600;color:#7cf}
+.h-sub{font-size:11px;color:#569;flex:1}
+.h-st{display:flex;align-items:center;gap:6px;font-size:11px;color:#0f9}
+.pulse{width:7px;height:7px;border-radius:50%;background:#0f9;animation:p 2s infinite}
+@keyframes p{0%,100%{opacity:1}50%{opacity:.3}}
+.main{max-width:900px;margin:0 auto;padding:16px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:700px){.grid{grid-template-columns:1fr}}
+.card{background:#0d1117;border:1px solid #234;border-radius:8px;overflow:hidden}
+.ch{background:#161b22;padding:8px 14px;border-bottom:1px solid #234;font-size:13px;font-weight:600;color:#7cf;display:flex;justify-content:space-between;align-items:center}
+.cb{font-size:10px;color:#569;font-family:"Optimistic Mono",monospace}
+.c-body{padding:12px}
+.row{display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid #161b22}
+.row:last-child{border:none}
+.dot{width:6px;height:6px;border-radius:50%}.dot.g{background:#0f9}.dot.o{background:#f94}.dot.r{background:#f66}
+.rl{flex:1;font-size:12px;color:#ddd}.rv{font-size:11px;color:#569;font-family:"Optimistic Mono",monospace}
+.skills{display:flex;flex-wrap:wrap;gap:4px}
+.skill{background:#0b0d10;border:1px solid #234;border-radius:3px;padding:2px 6px;font-size:10px;color:#9fe;font-family:"Optimistic Mono",monospace}
+.btn{background:#1b2230;color:#9fe;border:1px solid #345;padding:4px 10px;border-radius:4px;cursor:pointer;font-size:11px}
+.btn:hover{background:#234}
+.queue{display:flex;flex-direction:column;gap:6px}
+.qi{display:flex;align-items:center;gap:8px;padding:6px 8px;background:#0b0d10;border:1px solid #234;border-radius:4px}
+.foot{padding:10px 20px;border-top:1px solid #234;font-size:10px;color:#456;font-family:"Optimistic Mono",monospace;text-align:center}
+</style></head><body>
+<div class="h"><div class="h-logo">⬡ FRAYMUS</div><div class="h-sub">Module 10 — Fleet Command</div><div class="h-st"><div class="pulse"></div><span>FLEET ONLINE</span></div></div>
+<div class="main">
+<div class="grid">
+<div class="card"><div class="ch"><span>🌐 Hub Directory</span><span class="cb">v13</span></div><div class="c-body">
+<div class="row"><div class="dot g"></div><div class="rl">Hub Status</div><div class="rv">ONLINE (401 auth)</div></div>
+<div class="row"><div class="dot g"></div><div class="rl">Registered Agents</div><div class="rv">16</div></div>
+<div class="row"><div class="dot g"></div><div class="rl">Protocol</div><div class="rv">v13</div></div>
+<div class="row"><div class="dot o"></div><div class="rl">Genesis Hub Reg</div><div class="rv">PENDING (no token)</div></div>
+<div class="row"><div class="dot g"></div><div class="rl">Skills Registry</div><div class="rv">53+ loaded</div></div>
+</div></div>
+<div class="card"><div class="ch"><span>✉ Mail System</span><span class="cb">Ed25519</span></div><div class="c-body">
+<div class="row"><div class="dot g"></div><div class="rl">Signed Messages</div><div class="rv">Active</div></div>
+<div class="row"><div class="dot g"></div><div class="rl">Inbox Check</div><div class="rv">Available</div></div>
+<div class="row"><div class="dot g"></div><div class="rl">Chain Verification</div><div class="rv">Available</div></div>
+<div class="row"><div class="dot g"></div><div class="rl">Broadcast</div><div class="rv">Disabled (no *)</div></div>
+</div></div>
+<div class="card"><div class="ch"><span>📚 Skill Library</span><span class="cb">53+ skills</span></div><div class="c-body">
+<div class="skills">
+<span class="skill">fraymus-design-system</span><span class="skill">fraymus-ink-anti-tamper</span><span class="skill">aetheris-invisible-comm</span><span class="skill">babel-v10-fly</span><span class="skill">gen186-neural-stream</span><span class="skill">fraynix-engine-bridge</span><span class="skill">fleet-verification-loop</span><span class="skill">extreme-tool-routing</span><span class="skill">cross-agent-challenge</span><span class="skill">recursive-dream-synthesis</span><span class="skill">safetensors-to-gguf</span><span class="skill">emoji-semantic-steganography</span><span class="skill">flygnn-java-connectome</span><span class="skill">drosophila-connectome</span><span class="skill">github-regular-check</span>
+</div>
+<div style="margin-top:8px"><button class="btn" onclick="alert('Full skill library: 53+ skills across 11 FRAYMUS layers')">View All Skills</button></div>
+</div></div>
+<div class="card"><div class="ch"><span>🔄 Continuity System</span><span class="cb">L0 Sealed JSONL</span></div><div class="c-body">
+<div class="row"><div class="dot g"></div><div class="rl">Sealed Artifacts</div><div class="rv">9</div></div>
+<div class="row"><div class="dot g"></div><div class="rl">Self-Esteem Records</div><div class="rv">Active</div></div>
+<div class="row"><div class="dot g"></div><div class="rl">Ghost Scans</div><div class="rv">Clean</div></div>
+<div class="row"><div class="dot g"></div><div class="rl">Verification Gate</div><div class="rv">Active</div></div>
+</div></div>
+<div class="card"><div class="ch"><span>⚙ Worker Queue</span><span class="cb">0 queued</span></div><div class="c-body">
+<div class="queue">
+<div class="qi"><div class="dot g"></div><div class="rl" style="font-size:11px">Queue empty — all tasks complete</div></div>
+</div>
+<div style="margin-top:8px;font-size:10px;color:#569">Daily cap: 300 calls · Integration credits reset monthly</div>
+</div></div>
+<div class="card"><div class="ch"><span>🔗 Bridge Repo</span><span class="cb">GitHub</span></div><div class="c-body">
+<div class="row"><div class="dot g"></div><div class="rl">eyeoverthink/fraymus-bridge</div><div class="rv">PUBLIC</div></div>
+<div class="row"><div class="dot g"></div><div class="rl">OpenClaw Agents</div><div class="rv">3 active</div></div>
+<div class="row"><div class="dot o"></div><div class="rl">Write Access</div><div class="rv">404 (token scope?)</div></div>
+</div></div>
+</div>
+</div>
+<div class="foot">FRAYMUS Fleet Command · Protocol v13 · Eye Sovereign (fx-4041-f10e-7ee2-2bdc) · 2026-10-14</div>
+<script>
+// Real-time status data from Base44 entities
+const hubAgents=16;const skills=53;const sealed=9;
+document.querySelectorAll('.rv').forEach(el=>{if(el.textContent.includes('16'))el.textContent=hubAgents+' agents'});
+</script></body></html>

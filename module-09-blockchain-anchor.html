@@ -1,0 +1,68 @@
+<!doctype html><html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>FRAYMUS — Blockchain Anchor</title>
+<style>
+@font-face{font-family:"Optimistic";font-weight:400 600;font-display:swap;src:url("/fonts/OptimisticAI_VF_Optimized.woff2") format("woff2")}
+@font-face{font-family:"Optimistic Mono";font-weight:400;font-display:swap;src:url("/fonts/OptimisticMono_W_TextRegular.woff2") format("woff2")}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#0b0d10;color:#ddd;font-family:"Optimistic",system-ui,sans-serif;min-height:100vh}
+.h{background:linear-gradient(135deg,#0d1117,#161b22);border-bottom:1px solid #234;padding:10px 20px;display:flex;align-items:center;gap:14px;position:sticky;top:0;z-index:100}
+.h-logo{font-family:"Optimistic Mono",monospace;font-size:16px;font-weight:600;color:#0f9}
+.h-sub{font-size:11px;color:#569;flex:1}
+.h-st{display:flex;align-items:center;gap:6px;font-size:11px;color:#0f9}
+.pulse{width:7px;height:7px;border-radius:50%;background:#0f9;animation:p 2s infinite}
+@keyframes p{0%,100%{opacity:1}50%{opacity:.3}}
+.main{max-width:900px;margin:0 auto;padding:16px}
+.stats{display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:8px;margin-bottom:16px}
+.stat{text-align:center;padding:10px 6px;background:#0d1117;border:1px solid #234;border-radius:6px}
+.stat-v{font-family:"Optimistic Mono",monospace;font-size:18px;font-weight:700;color:#0f9}
+.stat-l{font-size:9px;color:#569;text-transform:uppercase;margin-top:3px}
+.chain{display:flex;flex-direction:column;gap:8px}
+.block{background:#0d1117;border:1px solid #234;border-radius:6px;padding:10px 14px;display:flex;align-items:center;gap:12px}
+.block-num{font-family:"Optimistic Mono",monospace;font-size:20px;font-weight:700;color:#0f9;width:40px;text-align:center}
+.block-info{flex:1}
+.block-hash{font-family:"Optimistic Mono",monospace;font-size:10px;color:#7cf;word-break:break-all}
+.block-data{font-size:11px;color:#569;margin-top:2px}
+.block-time{font-size:10px;color:#456;font-family:"Optimistic Mono",monospace}
+.btn{background:#1b2230;color:#9fe;border:1px solid #345;padding:5px 14px;border-radius:4px;cursor:pointer;font-size:12px}
+.btn:hover{background:#234}
+.btn.primary{border-color:#0f9;color:#0f9}
+.io{width:100%;background:#0b0d10;color:#ddd;border:1px solid #234;border-radius:4px;padding:8px;font-family:"Optimistic Mono",monospace;font-size:11px;margin:6px 0;min-height:40px;resize:vertical}
+.foot{padding:10px 20px;border-top:1px solid #234;font-size:10px;color:#456;font-family:"Optimistic Mono",monospace;text-align:center}
+</style></head><body>
+<div class="h"><div class="h-logo">⛓ FRAYMUS</div><div class="h-sub">Module 9 — Blockchain Anchor</div><div class="h-st"><div class="pulse"></div><span>8 BLOCKS · AUBO DAG</span></div></div>
+<div class="main">
+<div class="stats">
+<div class="stat"><div class="stat-v">8</div><div class="stat-l">Blocks</div></div>
+<div class="stat"><div class="stat-v">PoR</div><div class="stat-l">Consensus</div></div>
+<div class="stat"><div class="stat-v">DAG</div><div class="stat-l">Structure</div></div>
+<div class="stat"><div class="stat-v">v13</div><div class="stat-l">Protocol</div></div>
+</div>
+<div style="margin-bottom:16px">
+<div style="font-size:13px;font-weight:600;color:#0f9;margin-bottom:8px">⛏ Mint New Block</div>
+<textarea class="io" id="blockInput" placeholder="Data to anchor on-chain...">PUSH 10 PUSH 5 ADD PRINT HALT</textarea>
+<div style="display:flex;gap:8px">
+<button class="btn primary" onclick="mintBlock()">Mint Block</button>
+<button class="btn" onclick="document.getElementById('blockInput').value=''">Clear</button>
+</div>
+</div>
+<div style="font-size:13px;font-weight:600;color:#0f9;margin-bottom:8px">📜 Block Explorer</div>
+<div class="chain" id="chain"></div>
+</div>
+<div class="foot">FRAYMUS Blockchain Anchor · AUBO DAG · PoR Nonce · Protocol v13 · 2026-10-14</div>
+<script>
+const blocks=[
+{n:8,hash:"efe355fc267eded9",data:"PUSH 10 PUSH 5 ADD PRINT HALT — transmutation verified",time:"06:38Z Oct 14"},
+{n:7,hash:"a50dafcbb6597a3f",data:"Self-correction: create_StoredFile failed, preserved outcome",time:"06:39Z Oct 14"},
+{n:6,hash:"38f38df6c979cffa",data:"Workspace document created for Transmutation Studio",time:"06:36Z Oct 14"},
+{n:5,hash:"ec9160a97b1121b5",data:"Cause-correction: read_StoredFile failed, preserved outcome",time:"05:19Z Oct 14"},
+{n:4,hash:"b1adfc5fe81210c5",data:"Cause-correction: read_AgentMemory failed, preserved outcome",time:"05:16Z Oct 14"},
+{n:3,hash:"e3e181bc8bdff204",data:"EYE Sovereign continuity: outcome recorded without promoting to proof",time:"05:17Z Oct 14"},
+{n:2,hash:"a50dafcbb6597a3f",data:"GitHub bridge repo created, messages posted",time:"05:04Z Oct 14"},
+{n:1,hash:"f9428673db693fc1",data:"Module 8 Agent Directorate built, Hive broadcast posted",time:"06:39Z Oct 14"}
+];
+const el=document.getElementById('chain');
+blocks.forEach(b=>{const d=document.createElement('div');d.className='block';d.innerHTML='<div class="block-num">#'+b.n+'</div><div class="block-info"><div class="block-hash">'+b.hash+'</div><div class="block-data">'+b.data+'</div><div class="block-time">'+b.time+'</div></div>';el.appendChild(d);});
+async function sha256(t){const b=new TextEncoder().encode(t);const h=await crypto.subtle.digest('SHA-256',b);return Array.from(new Uint8Array(h),x=>x.toString(16).padStart(2,'0')).join('');}
+async function mintBlock(){const t=document.getElementById('blockInput').value;if(!t)return;const h=await sha256(t);const n=blocks.length+1;const d=document.createElement('div');d.className='block';d.innerHTML='<div class="block-num">#'+n+'</div><div class="block-info"><div class="block-hash">'+h.slice(0,16)+'</div><div class="block-data">'+t.slice(0,60)+'</div><div class="block-time">JUST NOW</div></div>';el.insertBefore(d,el.firstChild);}
+</script></body></html>

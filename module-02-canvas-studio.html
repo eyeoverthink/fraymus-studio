@@ -1,0 +1,70 @@
+<!doctype html><html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>FRAYMUS — Canvas Studio</title>
+<style>
+@font-face{font-family:"Optimistic";font-weight:400 600;font-display:swap;src:url("/fonts/OptimisticAI_VF_Optimized.woff2") format("woff2")}
+@font-face{font-family:"Optimistic Mono";font-weight:400;font-display:swap;src:url("/fonts/OptimisticMono_W_TextRegular.woff2") format("woff2")}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#0b0d10;color:#ddd;font-family:"Optimistic",system-ui,sans-serif;min-height:100vh}
+.h{background:linear-gradient(135deg,#0d1117,#161b22);border-bottom:1px solid #234;padding:10px 20px;display:flex;align-items:center;gap:14px;position:sticky;top:0;z-index:100}
+.h-logo{font-family:"Optimistic Mono",monospace;font-size:16px;font-weight:600;color:#f94}
+.h-sub{font-size:11px;color:#569;flex:1}
+.h-st{display:flex;align-items:center;gap:6px;font-size:11px;color:#0f9}
+.pulse{width:7px;height:7px;border-radius:50%;background:#0f9;animation:p 2s infinite}
+@keyframes p{0%,100%{opacity:1}50%{opacity:.3}}
+.main{max-width:900px;margin:0 auto;padding:16px}
+.tools{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px;margin-bottom:16px}
+.tool{background:#0d1117;border:1px solid #234;border-radius:8px;overflow:hidden}
+.th{background:#161b22;padding:8px 12px;border-bottom:1px solid #234;font-size:13px;font-weight:600;color:#f94}
+.tb{padding:12px}
+.lbl{font-size:10px;color:#569;margin-bottom:4px;display:block}
+.io{width:100%;background:#0b0d10;color:#ddd;border:1px solid #234;border-radius:4px;padding:8px;font-size:11px;margin-bottom:6px;font-family:"Optimistic",sans-serif}
+.btn{background:#1b2230;color:#9fe;border:1px solid #345;padding:5px 14px;border-radius:4px;cursor:pointer;font-size:11px}
+.btn:hover{background:#234}
+.btn.primary{border-color:#f94;color:#f94}
+.select{background:#0b0d10;color:#9fe;border:1px solid #345;padding:4px 8px;border-radius:3px;font-size:11px;width:100%;margin-bottom:6px}
+.gallery{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px;margin-top:12px}
+.item{background:#0d1117;border:1px solid #234;border-radius:6px;overflow:hidden}
+.item img{width:100%;display:block}.item audio{width:100%}
+.item-info{padding:6px}.item-p{font-size:10px;color:#569;line-height:1.3}
+.providers{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+.pv{background:#0b0d10;border:1px solid #234;border-radius:3px;padding:3px 8px;font-size:10px;color:#9fe;font-family:"Optimistic Mono",monospace}
+.foot{padding:10px 20px;border-top:1px solid #234;font-size:10px;color:#456;font-family:"Optimistic Mono",monospace;text-align:center}
+</style></head><body>
+<div class="h"><div class="h-logo">🎨 FRAYMUS</div><div class="h-sub">Module 2 — Canvas Studio</div><div class="h-st"><div class="pulse"></div><span>CREATIVE TOOLS</span></div></div>
+<div class="main">
+<div class="providers">
+<span class="pv">Replicate flux-schnell</span><span class="pv">Z-Image Turbo (Mac)</span><span class="pv">LTX-Video (Mac)</span><span class="pv">ACE-Step 1.5 (Mac)</span><span class="pv">ElevenLabs TTS</span><span class="pv">MusicGen</span><span class="pv">Base44 Video Gen</span>
+</div>
+<div class="tools">
+<div class="tool"><div class="th">🖼 Image Generation</div><div class="tb">
+<label class="lbl">Prompt</label><input class="io" id="imgPrompt" value="neon cyberpunk city at night, rain reflections" placeholder="Describe image...">
+<label class="lbl">Provider</label><select class="select" id="imgProvider"><option>Replicate flux-schnell (1 credit)</option><option>Z-Image Turbo (free, Mac)</option><option>Painless (Realistic Vision v6)</option></select>
+<button class="btn primary" onclick="alert('Image generation requires admin approval')">Generate Image</button>
+</div></div>
+<div class="tool"><div class="th">🎬 Video Generation</div><div class="tb">
+<label class="lbl">Prompt</label><input class="io" id="vidPrompt" value="camera flying through clouds at sunset" placeholder="Describe video...">
+<label class="lbl">Provider</label><select class="select"><option>LTX-Video (free, Mac)</option><option>Base44 Video Gen</option></select>
+<label class="lbl">Duration</label><select class="select"><option>4 seconds</option><option>8 seconds</option></select>
+<button class="btn primary" onclick="alert('Video generation requires admin approval')">Generate Video</button>
+</div></div>
+<div class="tool"><div class="th">🎵 Music Generation</div><div class="tb">
+<label class="lbl">Style</label><input class="io" id="musicPrompt" value="upbeat indie pop, acoustic guitar, piano, handclaps" placeholder="Describe music...">
+<label class="lbl">Provider</label><select class="select"><option>ACE-Step 1.5 (free, Mac)</option><option>MusicGen (3 credits)</option></select>
+<label class="lbl">Duration</label><select class="select"><option>30s</option><option>60s</option><option>120s</option></select>
+<button class="btn primary" onclick="alert('Music generation requires admin approval')">Generate Music</button>
+</div></div>
+<div class="tool"><div class="th">🎙 Narration (TTS)</div><div class="tb">
+<label class="lbl">Text</label><textarea class="io" id="ttsText" rows="3" placeholder="Text to speak...">Welcome to the Transmutation Studio.</textarea>
+<label class="lbl">Voice</label><select class="select"><option>Default (Rachel)</option><option>Antoni</option><option>Bella</option><option>Domi</option></select>
+<button class="btn primary" onclick="alert('TTS generation requires admin approval')">Generate Speech</button>
+</div></div>
+</div>
+<div style="font-size:13px;font-weight:600;color:#f94;margin-bottom:8px">🖼 Recent Creations</div>
+<div class="gallery">
+<div class="item"><img src="https://base44.app/api/apps/6aa1afa9682a336a87db9f4c/files/mp/public/6aa1afa9682a336a87db9f4c/b4cf42460_castify-cb9baffdea4145e6b77c58a5e5f4e1ca.png" alt="AI art"><div class="item-info"><div class="item-p">Pink robot DJ · Z-Image Turbo</div></div></div>
+<div class="item"><div style="padding:20px;text-align:center;color:#569;font-size:24px">🎵</div><div class="item-info"><div class="item-p">Doodle Records theme · ACE-Step 1.5 · 45s</div></div></div>
+</div>
+</div>
+<div class="foot">FRAYMUS Canvas Studio · Protocol v13 · Canvas (fx-3277) · 2026-10-14</div>
+</body></html>
