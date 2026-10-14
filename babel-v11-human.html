@@ -1,0 +1,269 @@
+<!doctype html><html><head><meta charset="utf-8"><title>Babel v11 Human — workspace ignition (wired)</title>
+<style>body{background:#0a0a0a;color:#e8e8e8;font:12px monospace;margin:14px}button{background:#111;color:#fc0;border:1px solid #444;padding:5px 8px;margin:2px;cursor:pointer}.amber{color:#fc0}.dim{opacity:.6}#areas{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}.area{border:1px solid #333;padding:6px}.area.ign{border-color:#fc0}.box{border:1px solid #333;padding:8px;margin-top:8px}#tl{height:140px;overflow:auto;white-space:pre}textarea{width:100%;height:140px;background:#111;color:#9fe}</style></head><body>
+<h2>Babel v11 Human — 12 areas + global workspace ignition, on the v10 Fly core</h2>
+<div class="dim">Honest counts: 1000 simulated neurons in 10 connectome neuropils + 2 computed modules (BG, CB) = 12 areas. No "1.2M modules". Readouts below are computed live by the network, not scripted.</div>
+<div class="box">seed <input id="seed" value="42" size="4"> <button onclick="UI.reset()">Reset</button><button onclick="UI.train(1)">Train x1</button><button onclick="UI.train(3)">Train x3</button>
+<label><input type="checkbox" checked onchange="UI.toggle(this.checked)"> Ignition broadcast ON</label> <button onclick="UI.exportJSONL()">Export v11 JSONL (self-create format)</button> <span id="info" class="dim"></span></div>
+<div class="box"><b>5 challenges (each runs real tasks through the network, net-only, trust table off)</b><div id="btns"></div></div>
+<div class="box" id="ws"></div><div class="box"><div id="areas"></div></div>
+<div class="box" id="res"></div><div class="box"><b>Timeline (PT)</b><div id="tl"></div></div><textarea id="jsonl" placeholder="v11 JSONL appears here"></textarea>
+<script id="engine">
+// ---- FlyGNN, reused verbatim from v10 bundle (de-minified names) ----
+const Kl=["SEZ","AL","MB","CX","OL","VNC","PB","FB","EB","NO"];
+const Yl=[{id:"ACH",val:1},{id:"GABA",val:-1},{id:"GLU",val:-1},{id:"DA",val:0.5},{id:"SEROTONIN",val:0.5},{id:"OCT",val:0.5}];
+function gi(e){return function(){let n=e+=1831565813;return n=Math.imul(n^n>>>15,n|1),n^=n+Math.imul(n^n>>>7,n|61),((n^n>>>14)>>>0)/4294967296}}
+class FlyGNN{neurons=new Map;rand;constructor(e=42){this.rand=gi(e),this.initializeConnectome(200,20)}initializeConnectome(e=200,n=20){this.neurons.clear();for(let l=0;l<e;l++){let o=Kl[l%Kl.length],u=Yl[Math.floor(this.rand()*Yl.length)],i={id:l,neuropil:o,transmitter:u,activation:(this.rand()-0.5)*0.4,intrinsicDescriptor:1,presynaptic:new Set,postsynaptic:new Set,richClub:!1,x:this.rand(),y:this.rand()};this.neurons.set(l,i)}for(let l=0;l<e;l++){let o=this.neurons.get(l);for(let u=0;u<n;u++){let i=Math.floor(this.rand()*e);if(i===l)continue;o.postsynaptic.add(i),this.neurons.get(i).presynaptic.add(l)}}let t=[...this.neurons.values()].sort((l,o)=>o.presynaptic.size+o.postsynaptic.size-(l.presynaptic.size+l.postsynaptic.size)),r=Math.floor(e*0.3);t.slice(0,r).forEach((l)=>{this.neurons.get(l.id).richClub=!0})}
+messagePassingStep(){let e=new Map;for(let[n,t]of this.neurons){let r=0;for(let u of t.presynaptic){let i=this.neurons.get(u);r+=i.activation*i.transmitter.val*i.intrinsicDescriptor*0.08}let l=t.intrinsicDescriptor*r+t.activation*0.1,o=Math.tanh(l);e.set(n,o)}for(let[n,t]of e)this.neurons.get(n).activation=t}
+afferentProjection(e){for(let[n,t]of e){let r=this.neurons.get(n);if(r)r.activation=Math.max(-1,Math.min(1,t))}}
+efferentDecoding(e){let n=new Map;for(let t of e){let r=this.neurons.get(t);if(r)n.set(t,r.activation)}return n}
+trainIntrinsicDescriptors(e){for(let[n,t]of e){let r=this.neurons.get(n);if(!r)continue;r.intrinsicDescriptor=0.8+t*0.7}}
+getByNeuropil(e){return[...this.neurons.values()].filter(n=>n.neuropil===e)}}
+
+// ---- Engine ----
+const WORDS=["mary","had","a","little","lamb","was","fire","hand","move_hand","steam","rain","hot","safe","stove","flame","window","umbrella","cloud","fingers","the","followed","storm","kettle","owned","wet","burn","roof","walked","behind","on"];
+const ALLOWED=["had","was","lamb","move_hand","steam","rain","mary","umbrella","wet"];
+const CLOSURE={move_hand:["hot","steam","safe"],had:["had"]};
+const LADDER=[0.15,0.35,0.55,0.70,0.85];
+const TASKS={b01_blind:{ctx:["burn", "hand"],key:"b01",kind:"reflex",target:"move_hand",wit:"move_hand"},b02_blind:{ctx:["burn", "fingers"],key:"b02",kind:"reflex",target:"move_hand",wit:"move_hand"},b03_blind:{ctx:["fingers", "flame"],key:"b03",kind:"reflex",target:"move_hand",wit:"move_hand"},b04_blind:{ctx:["hand", "kettle"],key:"b04",kind:"reflex",target:"move_hand",wit:"move_hand"},b05_blind:{ctx:["hot", "fingers"],key:"b05",kind:"reflex",target:"move_hand",wit:"move_hand"},b06_blind:{ctx:["stove", "fingers"],key:"b06",kind:"reflex",target:"move_hand",wit:"move_hand"},b07_blind:{ctx:["fingers", "burn"],key:"b07",kind:"reflex",target:"move_hand",wit:"move_hand"},b08_blind:{ctx:["storm", "roof"],key:"b08",kind:"language",target:"wet",wit:"wet"},b09_blind:{ctx:["roof", "rain"],key:"b09",kind:"language",target:"wet",wit:"wet"},b10_blind:{ctx:["window", "storm"],key:"b10",kind:"language",target:"umbrella",wit:"umbrella"},b11_blind:{ctx:["cloud", "on", "roof"],key:"b11",kind:"language",target:"rain",wit:"rain"},b12_blind:{ctx:["window", "cloud"],key:"b12",kind:"language",target:"rain",wit:"rain"},b13_blind:{ctx:["mary", "owned", "a", "little"],key:"b13",kind:"language",target:"lamb",wit:"lamb"},b14_blind:{ctx:["the", "lamb", "walked", "behind"],key:"b14",kind:"language",target:"mary",wit:"mary"},b15_blind:{ctx:["lamb", "followed"],key:"b15",kind:"language",target:"mary",wit:"mary"},b16_blind:{ctx:["mary", "a", "little"],key:"b16",kind:"language",target:"had",wit:"had"},b17_blind:{ctx:["owned", "a", "little"],key:"b17",kind:"language",target:"mary",wit:"mary"},b18_blind:{ctx:["a", "little", "lamb", "followed"],key:"b18",kind:"language",target:"mary",wit:"mary"},b19_blind:{ctx:["rain", "on", "window"],key:"b19",kind:"language",target:"umbrella",wit:"umbrella"},b20_blind:{ctx:["storm", "on", "roof"],key:"b20",kind:"language",target:"wet",wit:"wet"},mary:{ctx:["mary","little"],key:"mary_had_pattern",kind:"language",target:"had",wit:"had"},
+fire:{ctx:["fire","hand"],key:"fire_near_hand",kind:"reflex",target:"move_hand",wit:"steam"},
+had_little:{ctx:["had","a","little"],key:"had_little",kind:"language",target:"mary",wit:"mary"},
+mary_had_a_little:{ctx:["mary","had","a","little"],key:"mary_had_a_little",kind:"language",target:"lamb",wit:"lamb"},
+stove:{ctx:["stove","hand"],key:"stove_near_hand",kind:"reflex",target:"move_hand",wit:"hot"},
+hot_hand:{ctx:["hot","hand"],key:"hot_hand",kind:"reflex",target:"move_hand",wit:"safe"},
+rain_window:{ctx:["rain","window"],key:"rain_window",kind:"language",target:"umbrella",wit:"umbrella"},
+cloud_window:{ctx:["cloud","window"],key:"cloud_window",kind:"language",target:"rain",wit:"rain"},
+mary_a_lamb:{ctx:["mary","a","lamb"],key:"mary_a_lamb",kind:"language",target:"had",wit:"had"},
+flame:{ctx:["flame","hand"],key:"flame_near_hand",kind:"reflex",target:"move_hand",wit:"steam"}};
+const BLANK={mary:1,had_little:0,mary_a_lamb:1};/* Babel order of operations (from his compiler): prec 2 ^ Right, 3 * / Left, 4 + - Left, 5 unary + - Right.
+ Words -> ops: articles/modifiers = UnaryOp (prefix, like unary -); relations near/at/under/on/in = BinOp ADD-level (commutative);
+ juxtaposition = implicit BinOp MUL-level (commutative, binds tighter). Keys = (SYM, U|T + tree distance to blank), no L/R. */
+const UNARY=new Set(["a","the","little","hot"]),RELOP=new Set(["near","at","under","on","in"]);
+function parseSent(toks){let i=0;const pk=()=>toks[i];
+ const factor=()=>{const w=toks[i++];if(UNARY.has(w)&&i<toks.length&&!RELOP.has(pk())){const e=factor();return{type:"UnaryOp",op:w,expr:e}}return{type:"Num",w}};
+ const term=()=>{let e=factor();while(i<toks.length&&!RELOP.has(pk())){const r=factor();e={type:"BinOp",op:"*",left:e,right:r}}return e};
+ let e=term();while(i<toks.length&&RELOP.has(pk())){const op=toks[i++],r=term();e={type:"BinOp",op,left:e,right:r}}return e}
+const sideKeys=(name)=>{const T=TASKS[name],b=BLANK[name]??T.ctx.length;const toks=[...T.ctx];toks.splice(b,0,"_");const tree=parseSent(toks);
+ const paths=[];(function walk(n,p,un){if(n.type==="Num"){paths.push({w:n.w,p,un});return}if(n.type==="UnaryOp"){paths.push({w:n.op,p,un:true});walk(n.expr,[...p,n],un);return}walk(n.left,[...p,n],un);walk(n.right,[...p,n],un)})(tree,[],false);
+ const bp=paths.find(x=>x.w==="_").p;const out=[];for(const x of paths){if(x.w==="_")continue;let c=0;while(c<x.p.length&&c<bp.length&&x.p[c]===bp[c])c++;const d=Math.max(1,(x.p.length-c)+(bp.length-c));out.push(x.w+"@"+(x.un?"U":"T")+d)}return out};
+Object.assign(TASKS,{
+n_flame_fingers:{ctx:["flame","fingers"],key:"n1",kind:"reflex",target:"move_hand",wit:"steam"},
+n_kettle_hand:{ctx:["kettle","hand"],key:"n2",kind:"reflex",target:"move_hand",wit:"hot"},
+n_storm_window:{ctx:["storm","window"],key:"n3",kind:"language",target:"umbrella",wit:"umbrella"},
+n_mary_owned:{ctx:["mary","owned","a","little"],key:"n4",kind:"language",target:"lamb",wit:"lamb"},
+n_lamb_followed:{ctx:["the","lamb","followed"],key:"n5",kind:"language",target:"mary",wit:"mary"},
+n_hand_fire:{ctx:["hand","fire"],key:"n6",kind:"reflex",target:"move_hand",wit:"steam"},
+n_a_little:{ctx:["a","little"],key:"n7",kind:"language",target:"lamb",wit:"lamb"},
+n_storm_wet:{ctx:["storm"],key:"n8",kind:"language",target:"wet",wit:"wet"},
+n_kettle_burn:{ctx:["kettle","fingers"],key:"n9",kind:"reflex",target:"move_hand",wit:"burn"},
+n_window_rain:{ctx:["window","rain"],key:"n10",kind:"language",target:"umbrella",wit:"umbrella"}});
+Object.assign(TASKS,{rain_roof:{ctx:["rain","on","roof"],key:"rain_roof",kind:"language",target:"wet",wit:"wet"},
+lamb_walked:{ctx:["lamb","walked","behind"],key:"lamb_walked",kind:"language",target:"mary",wit:"mary"},
+rain_wet:{ctx:["rain"],key:"rain_wet",kind:"language",target:"wet",wit:"wet"}});
+const TRAIN=["mary","fire","had_little","mary_had_a_little","stove","hot_hand","rain_window","cloud_window","rain_roof","lamb_walked","rain_wet"];
+const CASES=[...TRAIN.map(t=>({task:t,split:"train",type:"hit"})),
+{task:"mary_a_lamb",split:"held",type:"hit"},{task:"flame",split:"held",type:"hit"},
+{task:"mary",split:"held",type:"miss",w:"was"},{task:"rain_window",split:"held",type:"miss",w:"lamb"},
+{task:"fire",split:"held",type:"unconfirmed"},{task:"cloud_window",split:"held",type:"unconfirmed"},
+{task:"stove",split:"held",type:"diffctx",w:"rain",wctx:"rain_window"},{task:"mary_a_lamb",split:"held",type:"diffctx",w:"had",wctx:"fire_near_hand"},...Object.keys(TASKS).filter(k=>k.startsWith("n_")).map(t=>({task:t,split:"novel",type:"hit"})),...Object.keys(TASKS).filter(k=>k.endsWith("_blind")).map(t=>({task:t,split:"blind",type:"hit"}))];
+const hex=w=>"0x"+[...w].map(c=>c.charCodeAt(0).toString(16).padStart(2,"0")).join("").toUpperCase();
+/* Shape lexer (Vaughn style: char-walk, push {type,value,pos}). Transmutes word -> C/V tokens -> shape class -> emoji glyph. */
+const VOW="aeiou";
+const shapeLex=w=>{const t=[];let n=0;const r=w.length;while(n<r){const l=w[n];if(l==="_"){t.push({type:"SEP",value:"_",pos:n});n++;continue}if(VOW.includes(l)||(l==="y"&&n>0)){t.push({type:"V",value:l,pos:n});n++;continue}t.push({type:"C",value:l,pos:n});n++;continue}return t};
+const cv=w=>shapeLex(w).filter(k=>k.type!=="SEP").map(k=>k.type).join("");
+const shapeClass=w=>{const p=cv(w);const vv=/VV/.test(p),vcv=/VCV/.test(p),cc=/CC/.test(p);return vv?(vcv?"VV+VCV":"VV"):vcv?(cc?"CC+VCV":"VCV"):cc?"CC":"CV"};
+const GLYPH={"CV":"🔹","VCV":"🔁","CC+VCV":"🔥","CC":"🧱","VV":"💧","VV+VCV":"🌊"};
+const FUNC=new Set(["a","the","little","hot","near","at","under","on","in","of","to"]);
+const oxPre=(a,b)=>{const A=hex(a).slice(2),B=hex(b).slice(2);let n=0;while(n<A.length&&A[n]===B[n])n++;return n/2/Math.max(1,Math.min(A.length,B.length)/2)};
+const shapeSim=(a,b)=>{const A=cv(a),B=cv(b);let n=0;while(n<A.length&&A[n]===B[n])n++;return (shapeClass(a)===shapeClass(b)?0.5:0)+0.5*n/Math.max(A.length,B.length)};
+/* Meaning-emoji layer (Vaughn CSS/Glyph style): word -> compound glyph string; glyphs = meaning atoms. Editable in UI. */
+let EMOJI={mary:"👧",had:"🤲",a:"☝",little:"🤏",lamb:"🐑",was:"⏳",fire:"🔥",hand:"✋",move_hand:"✋💨",steam:"♨💧💨",rain:"🌧💧",hot:"🌡🔥",safe:"🛡",stove:"🍳🔥",flame:"🔥",window:"🪟",umbrella:"☂💧",cloud:"☁🌧",fingers:"✋👆",the:"👉",followed:"👣",storm:"💧🌧⛈",kettle:"🫖🔥💧",owned:"🤲",wet:"💧",burn:"🔥🩹",roof:"🏠⬆",walked:"👣",behind:"🔙",near:"➕",at:"➕📍",under:"➕⬇",on:"➕⬆",in:"➕📦",_:"❓"};
+const glyphs=w=>[...new Intl.Segmenter().segment(EMOJI[w]||"")].map(x=>x.segment.replace(/\uFE0F/g,""));
+/* Order-of-operations similarity: first glyph = highest precedence (weight 1/(i+1)). meaning = precedence-weighted shared glyphs; bonus when shared glyphs keep same relative order. */
+const emoSim=(a,b)=>{const A=glyphs(a),B=glyphs(b);const pw=i=>1/(i+1);const wA=new Map,wB=new Map;A.forEach((g,i)=>{if(!wA.has(g))wA.set(g,pw(i))});B.forEach((g,i)=>{if(!wB.has(g))wB.set(g,pw(i))});
+ const sh=[...wA.keys()].filter(g=>wB.has(g));if(!sh.length)return 0;let num=0;sh.forEach(g=>num+=(wA.get(g)+wB.get(g))/2);let tot=0;new Set([...wA.keys(),...wB.keys()]).forEach(g=>tot+=Math.max(wA.get(g)||0,wB.get(g)||0));const meaning=num/tot;
+ let pr=0,ok=0;for(let i=0;i<sh.length;i++)for(let j=i+1;j<sh.length;j++){pr++;if((A.indexOf(sh[i])<A.indexOf(sh[j]))===(B.indexOf(sh[i])<B.indexOf(sh[j])))ok++}const ord=pr?ok/pr:1;return meaning*(0.75+0.25*ord)};
+const transmute=toks=>toks.map(w=>EMOJI[w]||"·").join(" ");
+const BORROW=0.25;
+const E={trustOn:true,N_IN:8,K:5,log:[],
+ reset(seed=42){this.seed=seed;this.log=[];this.rounds=0;this.lastHist=null;this.lastTask=null;this.quiet=false;this.g=new FlyGNN(seed);this.g.initializeConnectome(1000,20);this.noise=gi(7+seed*977);this.sym={};const by=n=>this.g.getByNeuropil(n).map(x=>x.id);
+  const AL=by("AL"),CX=by("CX"),VNC=by("VNC");
+  WORDS.forEach((w,i)=>this.sym[w]={hex:hex(w),id:"SYM_"+i,al:[AL[2*i],AL[2*i+1]],cx:[CX[2*i],CX[2*i+1]],vnc:[VNC[2*i],VNC[2*i+1]]});
+  this._bm=null;this.W={};this.patternTrust={};this.premTrust={};this.memory={};this.pending=null;this.hist=[];this.input=[];this.inLeft=0;this.t=0;this.scores={};this.chosen=null;this.windows={reflex:2,language:4};this.chist={};},
+ trained(){const src=new Set,tgt=new Set;for(const ck in this.W)for(const p in this.W[ck])if(this.W[ck][p]>0){src.add(ck.split("@")[0]);tgt.add(p)}return{src,tgt}},
+ donor(w,pool){let best=null,bs=-1;if(FUNC.has(w))return null;for(const k of pool){if(k===w||FUNC.has(k))continue;const sc=emoSim(w,k)+0.01*oxPre(w,k);if(sc>bs){bs=sc;best=k}}return best&&bs>=0.1?{w:best,score:bs}:null},
+ borrowMap(){const{src,tgt}=this.trained();const m={src:{},tgt:{}};
+  WORDS.forEach(w=>{if(!src.has(w)&&src.size){const d=this.donor(w,src);if(d)m.src[w]=d}if(ALLOWED.includes(w)&&!tgt.has(w)&&tgt.size){const d=this.donor(w,tgt);if(d)m.tgt[w]=d}});return m},
+ effRow(ck,bm){const[w,role]=ck.split("@");const own=this.W[ck];if(own&&Object.values(own).some(v=>v>0))return own;
+  const d=bm.src[w];if(!d)return own||{};const rows=Object.keys(this.W).filter(k=>k.split("@")[0]===d.w);if(!rows.length)return {};
+  const pick=rows.find(k=>k.split("@")[1]===role)||rows.find(k=>k.split("@")[1][0]===role[0])||rows[0];const r={};for(const p in this.W[pick])r[p]=BORROW*this.W[pick][p];return r},
+ rec(k,p){(this.chist[k]=this.chist[k]||[]).push(+this.conf(k,p).toFixed(2))},
+ tick(){const g=this.g;
+  if(this.inLeft>0){const m=new Map;this.input.forEach(w=>this.sym[w].al.forEach(n=>m.set(n,0.85)));g.afferentProjection(m);this.inLeft--;}
+  g.messagePassingStep();
+  // Hebbian MB->CX->VNC path: active context SYM drives predicted SYM's CX + VNC neurons
+  const bm=this._bm||(this._bm=this.borrowMap());
+  for(const ck of this.inKeys||[]){const c=ck.split("@")[0];const ca=this.sym[c].al.reduce((s,n)=>s+Math.max(0,g.neurons.get(n).activation),0)/2;const dist=+ck.split("@")[1].slice(1)||1;const row={...this.effRow(ck,bm)};for(const t in bm.tgt){const dn=bm.tgt[t].w;if(row[dn]>0&&!(row[t]>0))row[t]=BORROW*row[dn]};
+   {const own=this.W[ck]&&Object.values(this.W[ck]).some(v=>v>0);if(!own&&bm.src[c])ALLOWED.forEach(p=>{if(p===c)return;const gm=emoSim(c,p);if(gm>0)row[p]=(row[p]||0)+BORROW*gm})}/* answer glyph-order term, borrowed rows only */
+   for(const p in row){const d=row[p]*ca/dist;[...this.sym[p].cx,...this.sym[p].vnc].forEach(n=>{const x=g.neurons.get(n);x.activation=Math.tanh(x.activation+d)})}}
+  const out={};ALLOWED.forEach(w=>{const v=g.efferentDecoding(this.sym[w].vnc);out[w]=[...v.values()].reduce((a,b)=>a+b,0)/2});
+  this.hist.push(out);if(this.hist.length>this.K)this.hist.shift();this.t++;},
+ readout(task){const s={};if(task)this.lastTask=task;task=task||this.lastTask;const H=this.lastHist||this.hist;const cand=ALLOWED.filter(w=>!(task&&task.ctx.includes(w)));cand.forEach(w=>s[w]=H.reduce((a,h)=>a+h[w],0)/Math.max(1,H.length));
+  if(this.trustOn&&task){const p=this.memory[task.key];if(p)s[p]+=this.conf(task.key,p);}
+  this.scores=s;this.chosen=cand.reduce((a,b)=>s[b]>s[a]?b:a);return this.chosen},
+ conf(key,p){const k=key+"|"+p,pt=this.premTrust[k]||0;if(pt>0)return LADDER[Math.min(4,pt)];return 0.15+0.3*Math.min(0.5,this.patternTrust[p]||0)},
+ present(name,jitter){const task=TASKS[name];this.hist=[];
+  if(jitter)for(const x of this.g.neurons.values())x.activation=(this.noise()-0.5)*0.4;
+  this.input=task.ctx;this.inKeys=sideKeys(name);this.pending0=name;this.inLeft=this.N_IN;for(let i=0;i<this.N_IN+2;i++)this.tick();
+  this.lastHist=this.hist.slice();const c=this.readout(task);this.pending={task,pred:c,conf:this.conf(task.key,c),age:0};this.L(`${name}: premonition ${c} conf ${this.pending.conf.toFixed(2)}`);return c},
+ witness(w,ctxKey){const P=this.pending;this.patternTrust[w]=Math.min(0.5,(this.patternTrust[w]||0)+0.1);
+  if(!P){this.L(`witnessed ${w} (passive)`);return 'passive'}
+  if(ctxKey!==P.task.key){P.age++;this.L(`witnessed ${w} other context → pending`);return this.expire()}
+  const ok=w===P.pred||(CLOSURE[P.pred]||[]).includes(w)||(CLOSURE[P.task.target]||[]).includes(w)&&w!==P.pred;
+  const target=ok?P.pred:null;const ctx=sideKeys(Object.keys(TASKS).find(n=>TASKS[n]===P.task)),k=P.task.key;
+  if(ok&&(w===P.pred||(CLOSURE[P.pred]||[]).includes(w))){const kk=k+"|"+P.pred;this.premTrust[kk]=(this.premTrust[kk]||0)+1;this.memory[k]=P.pred;
+   this._bm=null;ctx.forEach(c=>{this.W[c]=this.W[c]||{};this.W[c][P.pred]=Math.min(1.5,(this.W[c][P.pred]||0)+0.08)});this.rec(k,P.pred);this.L(`HIT ${P.pred} ← ${w} → conf ${this.conf(k,P.pred).toFixed(2)}`)}
+  else{ // miss: floor 0.15, trust -1, competitor +1; Hebbian toward the actual word (or its closure owner)
+   const actual=ALLOWED.includes(w)&&!(CLOSURE[P.task.target]||[]).includes(w)?w:P.task.target;const kk=k+"|"+P.pred;this.premTrust[kk]=Math.max(0,(this.premTrust[kk]||0)-1);
+   const ka=k+"|"+actual;this.premTrust[ka]=(this.premTrust[ka]||0)+1;this.memory[k]=actual;
+   this._bm=null;ctx.forEach(c=>{this.W[c]=this.W[c]||{};this.W[c][P.pred]=Math.max(0,(this.W[c][P.pred]||0)-0.04);this.W[c][actual]=Math.min(1.5,(this.W[c][actual]||0)+0.08)});
+   this.rec(k,P.pred);this.L(`MISS predicted ${P.pred}, witnessed ${w} → floor 0.15, competitor ${actual} +1`)}
+  const st=(ok&&(w===P.pred||(CLOSURE[P.pred]||[]).includes(w)))?'hit':'miss';this.pending=null;this.input=[];this.inKeys=[];for(let i=0;i<3;i++)this.tick();return st},
+ expire(){const P=this.pending;if(P&&P.age>=this.windows[P.task.kind]){this.L(`${P.pred} unconfirmed (no penalty)`);this.pending=null;return 'unconfirmed'}return 'pending'},
+ advance(){if(this.pending){this.pending.age++;return this.expire()}return 'none'},
+ snap(){return JSON.stringify({W:this.W,pt:this.patternTrust,pr:this.premTrust,m:this.memory,c:this.chist,a:[...this.g.neurons.values()].map(x=>x.activation)})},
+ restore(j){const o=JSON.parse(j);this.W=o.W;this.patternTrust=o.pt;this.premTrust=o.pr;this.memory=o.m;this.chist=o.c;this._bm=null;o.a.forEach((v,i)=>this.g.neurons.get(i).activation=v);this.pending=null},
+ // reference v9 rule (independent of engine) -> expected status+conf
+ expect(c,pred,pre){const T=TASKS[c.task],k=T.key;const L=n=>n>0?LADDER[Math.min(4,n)]:0.15+0.3*Math.min(0.5,pre.pt[pred]||0);
+  if(c.type==='unconfirmed'||c.type==='diffctx')return{st:'unconfirmed',conf:L(pre.pr[k+'|'+pred]||0)};
+  const w=c.w||T.wit,hit=w===pred||(CLOSURE[pred]||[]).includes(w);
+  if(hit)return{st:'hit',conf:L((pre.pr[k+'|'+pred]||0)+1)};return{st:'miss',conf:0.15}},
+ runCase(c){const T=TASKS[c.task];const pre=JSON.parse(this.snap());const pred=this.present(c.task,true);const P=this.pending;const ex=this.expect(c,pred,pre);let st,conf,win=true;
+  if(c.type==='hit'||c.type==='miss'){st=this.witness(c.w||T.wit,T.key);conf=st==='hit'?this.conf(T.key,pred):0.15}
+  else{const W=this.windows[T.kind];for(let i=1;i<=W;i++){const r=c.type==='diffctx'?this.witness(c.w,c.wctx):this.advance();st=r;if(i<W&&r!=='pending')win=false;if(i===W&&r!=='unconfirmed')win=false}conf=this.conf(T.key,pred)}
+  return{c,pred,word:pred===T.target,st,stOk:st===ex.st&&(c.type!=='hit'||pred===T.target),confOk:Math.abs(conf-ex.conf)<=0.01,win}},
+ evaluate(){const res={};const keep=this.log.length,save=this.trustOn;
+  for(const mode of[false,true]){const s0=this.snap();this.trustOn=mode;const rows=CASES.map(c=>{const r=this.runCase(c);this.restore(s0);return r});
+   const agg=f=>{const o={};["train","held","novel","blind"].forEach(sp=>{const rr=rows.filter(r=>r.c.split===sp);o[sp]={word:rr.filter(r=>r.word).length/rr.length,status:rr.filter(r=>r.stOk).length/rr.length,conf:rr.filter(r=>r.confOk).length/rr.length,window:rr.filter(r=>r.win).length/rr.length,n:rr.length}});return o};
+   res[mode?'trustON':'netOnly']=agg();}
+  this.trustOn=save;this.log.length=keep;const tg=CASES.map(c=>TASKS[c.task].target);
+  res.baseline={wordChance:1/ALLOWED.length,wordAlwaysMoveHand:tg.filter(t=>t==='move_hand').length/tg.length,statusAlwaysHit:CASES.filter(c=>c.type==='hit').length/CASES.length};
+  this.lastEval=res;this.L('EVALUATE done');return res},
+ L(m){if(this.quiet)return;const d=new Date();const last=this.log[this.log.length-1];if(last&&last.m===m){last.n++;last.t=d;return}this.log.push({m,n:1,t:d});if(this.log.length>300)this.log.shift()},
+ Lold(m){const d=new Date();this.log.push(d.toLocaleTimeString("en-US",{timeZone:"America/Los_Angeles"})+" PT  "+m);if(this.log.length>300)this.log.shift()},
+ train(n=20,label){for(let i=0;i<n;i++){let h=0,m=0,cs=0;this.quiet=true;for(const t of TRAIN){this.present(t,true);const r=this.witness(TASKS[t].wit,TASKS[t].key);r==="hit"?h++:m++;cs+=this.conf(TASKS[t].key,this.memory[TASKS[t].key]||TASKS[t].target)}this.quiet=false;this.rounds=(this.rounds||0)+1;this.L(`Train round ${label||this.rounds}: ${h} hits, ${m} misses, avg conf ${(cs/TRAIN.length).toFixed(2)}`)}},
+ measure(n=100){const save=this.trustOn;this.trustOn=false;let ok=0;const keep=this.log.length;
+  for(let i=0;i<n;i++){const name=i%2?"fire":"mary";const c=this.present(name,true);if(c===TASKS[name].target)ok++;this.pending=null}
+  this.trustOn=save;this.log.length=keep;const r={acc:ok/n,chance:1/ALLOWED.length};this.L(`MEASURE network-only: ${(r.acc*100).toFixed(0)}% correct (chance ${(r.chance*100).toFixed(1)}%)`);return r}};
+
+
+// ===== Babel v11 human layer: 12 computing areas + global-workspace ignition, on top of the unmodified v10 FlyGNN core =====
+// Honest counts: 1000 simulated neurons (10 connectome neuropils) + 2 computed modules (BG, CB) = 12 areas. Not 1.2M.
+const AREAS=["AL","OL","MB","CX","VNC","SEZ","FB","EB","PB","NO","BG","CB"];
+const PAIN=new Set(["burn","hot","fire","flame","stove","kettle","steam"]);
+const CHALLENGES=[
+ {id:"MIRROR",num:"C-01",name:"MIRROR / SELF-MODEL",what:"metacognition: does the workspace's own confidence (ignited or not) predict whether its answer is right?",tasks:"all"},
+ {id:"TOM",num:"C-02",name:"THEORY OF MIND (agents & roles)",what:"who-did-what language tasks (mary/lamb roles)",tasks:["b13_blind","b14_blind","b15_blind","b17_blind","b18_blind","n_lamb_followed","n_mary_owned","lamb_walked","had_little"]},
+ {id:"QUALIA",num:"C-03",name:"QUALIA -> meaning transfer",what:"no qualia are measured; tests transfer of meaning to unseen words via emoji-glyph borrowing",tasks:["flame","n_flame_fingers","n_kettle_hand","n_storm_window","n_hand_fire","n_storm_wet","n_kettle_burn","n_window_rain","n_a_little","b03_blind","b10_blind"]},
+ {id:"SUFFER",num:"C-04",name:"SUFFERING / VALENCE",what:"pain-word reflexes; SEZ valence goes negative, NO arousal rises",tasks:["b01_blind","b02_blind","b04_blind","b05_blind","b06_blind","b07_blind","n_kettle_burn","stove","hot_hand","fire"]},
+ {id:"DREAM",num:"C-05",name:"DREAMING / REPLAY",what:"offline PB replay with no input: accuracy on held+novel after 40 replay ticks minus before",tasks:["mary_a_lamb","flame","n_flame_fingers","n_kettle_hand","n_storm_window","n_mary_owned","n_lamb_followed","n_hand_fire","n_a_little","n_storm_wet","n_kettle_burn","n_window_rain"]}];
+const _w10=E.witness,_r10=E.reset;
+Object.assign(E,{_witness10:_w10,reset(seed=42){_r10.call(this,seed);this.initV11()},ignitionOn:true,IGN_TH:0.85,IGN_HOLD:3,BCAST_TH:0,BETA:80,dreamOn:false,
+ initV11(){const by=n=>this.g.getByNeuropil(n).map(x=>x.id);this.ids={};["AL","OL","MB","CX","VNC","SEZ","FB","EB","PB","NO"].forEach(n=>this.ids[n]=by(n));
+  this.mod={AL:{front:[],back:[]},OL:{gain:1},MB:{recall:0},CX:{window:0},VNC:{top:null},SEZ:{valence:0},FB:{default:0},EB:{dist:1},PB:{buffer:[],replays:0},NO:{arousal:0.4},BG:{da:0,lr:1},CB:{coherence:0}};
+  this.ws={conf:[],ignited:false,ignTick:null,winner:null,broadcasts:0,would:false};this.prevOut=null;this.trace=[];},
+ neuMean(n){const a=this.ids[n];let s=0;for(const i of a)s+=this.g.neurons.get(i).activation;return s/a.length},
+ modVec(){const m=this.mod;return{AL:this.neuMean("AL"),OL:m.OL.gain,MB:this.neuMean("MB"),CX:this.neuMean("CX"),VNC:this.neuMean("VNC"),SEZ:m.SEZ.valence,FB:this.neuMean("FB"),EB:this.neuMean("EB"),PB:this.neuMean("PB"),NO:m.NO.arousal,BG:m.BG.lr,CB:m.CB.coherence}},
+ cand(){const t=this.lastTask;return ALLOWED.filter(w=>!(t&&t.ctx.includes(w)))},
+ tick(){const g=this.g,m=this.mod,inp=this.inLeft>0;
+  // AL frame buffer (double buffer): back <- front, front <- current AL
+  m.AL.back=m.AL.front;
+  // NO arousal scales afferent drive
+  if(inp){const drive=Math.min(1,0.85*(0.75+0.5*m.NO.arousal));const mm=new Map;this.input.forEach(w=>this.sym[w].al.forEach(n=>mm.set(n,drive)));g.afferentProjection(mm);this.inLeft--;
+   // OL thalamus gate: attenuate AL neurons that are not part of the current input
+   const keep=new Set(this.input.flatMap(w=>this.sym[w].al));for(const i of this.ids.AL)if(!keep.has(i)){const x=g.neurons.get(i);x.activation*=m.OL.gain}}
+  // FB default mode: when idle, FB neurons get spontaneous drive (suppressed while ignited)
+  if(!inp&&!(this.inKeys&&this.inKeys.length)){const d=this.ws.ignited?0:0.05;for(const i of this.ids.FB){const x=g.neurons.get(i);x.activation=Math.tanh(x.activation+d)}}
+  g.messagePassingStep();
+  m.AL.front=this.ids.AL.slice(0,24).map(i=>+g.neurons.get(i).activation.toFixed(3));
+  // MB->CX->VNC Hebbian path (v10), EB = tree-distance weighting, BG unaffected here
+  const bm=this._bm||(this._bm=this.borrowMap());let recall=0,dsum=0,dn=0;
+  for(const ck of this.inKeys||[]){const c=ck.split("@")[0];const ca=this.sym[c].al.reduce((s,n)=>s+Math.max(0,g.neurons.get(n).activation),0)/2;const dist=+ck.split("@")[1].slice(1)||1;dsum+=dist;dn++;const row={...this.effRow(ck,bm)};for(const t in bm.tgt){const d2=bm.tgt[t].w;if(row[d2]>0&&!(row[t]>0))row[t]=BORROW*row[d2]};
+   {const own=this.W[ck]&&Object.values(this.W[ck]).some(v=>v>0);if(!own&&bm.src[c])ALLOWED.forEach(p=>{if(p===c)return;const gm=emoSim(c,p);if(gm>0)row[p]=(row[p]||0)+BORROW*gm})}
+   for(const p in row){const d=row[p]*ca/dist;recall+=Math.abs(d);[...this.sym[p].cx,...this.sym[p].vnc].forEach(n=>{const x=g.neurons.get(n);x.activation=Math.tanh(x.activation+d)})}}
+  m.MB.recall=recall;m.EB.dist=dn?dsum/dn:m.EB.dist;
+  const out={};ALLOWED.forEach(w=>{const v=g.efferentDecoding(this.sym[w].vnc);out[w]=[...v.values()].reduce((a,b)=>a+b,0)/2});
+  this.hist.push(out);if(this.hist.length>this.K)this.hist.shift();this.t++;
+  // CB coherence: cosine between successive VNC readouts
+  const ks=ALLOWED,a=ks.map(k=>out[k]),b=this.prevOut?ks.map(k=>this.prevOut[k]):a;let dot=0,na=0,nb=0;for(let i=0;i<a.length;i++){dot+=a[i]*b[i];na+=a[i]*a[i];nb+=b[i]*b[i]}m.CB.coherence=na&&nb?dot/Math.sqrt(na*nb):0;this.prevOut=out;
+  // Global workspace: confidence = softmax max over candidate readouts (computed from the network every tick)
+  if(this.inKeys&&this.inKeys.length){const c=this.cand();const ex=c.map(w=>Math.exp(this.BETA*out[w]));const Z=ex.reduce((s,v)=>s+v,0);let bi=0;ex.forEach((v,i)=>{if(v>ex[bi])bi=i});const conf=ex[bi]/Z;
+   this.ws.conf.push(+conf.toFixed(4));m.VNC.top=c[bi];m.CX.window=this.windows[this.lastTask?this.lastTask.kind:"language"];
+   const H=this.ws.conf.slice(-this.IGN_HOLD);const hold=H.length===this.IGN_HOLD&&H.every(v=>v>=this.IGN_TH);
+   if(hold&&!this.ws.would){this.ws.would=true;this.ws.ignTick=this.ws.conf.length;this.ws.winner=c[bi];if(this.ignitionOn&&conf>=this.BCAST_TH){this.ws.ignited=true;this.broadcast(c[bi])}}
+   if(this.ws.ignited&&this.ignitionOn)this.sustain();}
+  else if(this.dreamOn)this.replayTick();
+  if(this.recTrace)this.trace.push({t:this.t,ign:this.ws.ignited,conf:this.ws.conf[this.ws.conf.length-1]??null,mod:this.modVec()});},
+ broadcast(w){const m=this.mod,g=this.g;this.ws.broadcasts++;
+  // every one of the 12 areas receives the winning content and changes state:
+  this.sym[w].al.forEach(i=>{const x=g.neurons.get(i);x.activation=Math.tanh(x.activation+0.3)});      // AL: top-down prediction written into frame buffer
+  m.OL.gain=0.4;                                                                                         // OL: gate tightens (attention locked)
+  this.ids.MB.forEach(i=>{const x=g.neurons.get(i);x.activation*=0.9});                                  // MB: retrieval sharpened (background damped)
+  this.sym[w].cx.forEach(i=>{const x=g.neurons.get(i);x.activation=Math.tanh(x.activation+0.3)});       // CX: premise held
+  ALLOWED.forEach(o=>{if(o!==w)this.sym[o].vnc.forEach(i=>{const x=g.neurons.get(i);x.activation*=0.8})});// VNC: competitors inhibited
+  m.SEZ.valence=Math.max(-1,Math.min(1,m.SEZ.valence+0.1));                                             // SEZ: confidence is mildly rewarding
+  this.ids.FB.forEach(i=>{const x=g.neurons.get(i);x.activation*=0.5});                                  // FB: default mode suppressed
+  this.ids.EB.forEach(i=>{const x=g.neurons.get(i);x.activation=Math.tanh(x.activation+0.05)});         // EB: spatial context bound
+  this.ids.PB.forEach(i=>{const x=g.neurons.get(i);x.activation=Math.tanh(x.activation+0.05)});         // PB: episode time-stamped (tagged for replay below)
+  m.NO.arousal=Math.max(0.1,m.NO.arousal-0.2);                                                           // NO: arousal drops (uncertainty resolved)
+  m.BG.lr=Math.min(2,m.BG.lr*1.25);                                                                      // BG: consolidation gain for this episode
+  m.CB.coherence=Math.min(1,m.CB.coherence+0.05);},                                                      // CB: workspace coherence bump
+ sustain(){const w=this.ws.winner;this.sym[w].vnc.forEach(i=>{const x=this.g.neurons.get(i);x.activation=Math.tanh(x.activation+0.05)})},
+ replayTick(){const P=this.mod.PB;if(!P.buffer.length)return;const ep=P.buffer[P.replays%P.buffer.length];P.replays++;
+  // offline: re-present a stored episode internally (no witness); if the network reproduces the remembered outcome, consolidate a little
+  const save={i:this.input,k:this.inKeys,l:this.inLeft,h:this.hist,lt:this.lastTask,d:this.dreamOn};this.dreamOn=false;
+  const T=TASKS[ep.task];this.lastTask=T;this.hist=[];this.input=T.ctx;this.inKeys=sideKeys(ep.task);this.inLeft=3;for(let i=0;i<4;i++)this.tick();
+  const pred=this.cand().reduce((a,b)=>{const s=w=>this.hist.reduce((q,h)=>q+h[w],0);return s(b)>s(a)?b:a});
+  if(pred===ep.out){this._bm=null;this.inKeys.forEach(c=>{this.W[c]=this.W[c]||{};this.W[c][pred]=Math.min(1.5,(this.W[c][pred]||0)+0.02*ep.w)})}
+  Object.assign(this,{input:save.i,inKeys:[],inLeft:0,hist:save.h,lastTask:save.lt,dreamOn:save.d});this.ws.conf=[];this.ws.would=false;this.ws.ignited=false},
+ present(name,jitter){const task=TASKS[name];this.hist=[];this.lastTask=task;this.ws.conf=[];this.ws.ignited=false;this.ws.would=false;this.ws.ignTick=null;this.ws.winner=null;this.mod.OL.gain=0.7;
+  if(PAIN.has(task.ctx.find(w=>PAIN.has(w)))){this.mod.SEZ.valence=Math.max(-1,this.mod.SEZ.valence-0.3)}
+  this.mod.NO.arousal=Math.min(1,0.3+0.6*Math.abs(this.mod.SEZ.valence));
+  if(jitter)for(const x of this.g.neurons.values())x.activation=(this.noise()-0.5)*0.4;
+  this.input=task.ctx;this.inKeys=sideKeys(name);this.pending0=name;this.inLeft=this.N_IN;for(let i=0;i<this.N_IN+2;i++)this.tick();
+  this.lastHist=this.hist.slice();const c=this.readout(task);this.pending={task,pred:c,conf:this.conf(task.key,c),age:0,ign:this.ws.ignited,name};this.L(`${name}: premonition ${c} conf ${this.pending.conf.toFixed(2)}${this.ws.ignited?" IGNITED":""}`);return c},
+ witness(w,ctxKey){const P=this.pending;const W0=JSON.parse(JSON.stringify(this.W));const r=this._witness10(w,ctxKey);
+  if(P&&(r==='hit'||r==='miss')){const m=this.mod;const rew=r==='hit'?1:0;m.BG.da=rew-P.conf;const lr=Math.max(0.25,Math.min(2,m.BG.lr*(1+0.5*m.BG.da)));
+   for(const c in this.W)for(const p in this.W[c]){const o=(W0[c]||{})[p]||0;this.W[c][p]=Math.max(0,Math.min(1.5,o+(this.W[c][p]-o)*lr))}this._bm=null;
+   m.SEZ.valence=Math.max(-1,Math.min(1,m.SEZ.valence*0.7+(r==='hit'?0.2:-0.3)));m.BG.lr=1;
+   m.PB.buffer.push({task:P.name,out:r==='hit'?P.pred:(ALLOWED.includes(w)?w:P.task.target),w:P.ign?1:0.5});if(m.PB.buffer.length>40)m.PB.buffer.shift()}
+  return r},
+ snap11(){return JSON.stringify({s:this.snap(),mod:this.mod})},
+});
+
+E.reset(42);
+
+</script><script>const $=id=>document.getElementById(id);
+const UI={ch:null,last:null,
+ train(n){E.quiet=true;E.trustOn=true;E.train(n);E.quiet=false;E.L(`trained ${n} round(s), total ${E.rounds}`);this.draw()},
+ reset(){E.reset(+$("seed").value||42);E.L("reset seed "+E.seed);this.ch=null;this.last=null;this.draw()},
+ toggle(v){E.ignitionOn=v;this.draw()},
+ runCh(id){const C=CHALLENGES.find(c=>c.id===id);this.ch=C;const before=E.modVec();const saveTrust=E.trustOn;E.trustOn=false;E.quiet=true;
+  const tasks=C.tasks==="all"?[...new Set(CHALLENGES.filter(c=>c.tasks!=="all").flatMap(c=>c.tasks))]:C.tasks;let rows=[];
+  const evalT=()=>tasks.map(t=>{const p=E.present(t,true);E.pending=null;return{t,p,ok:p===TASKS[t].target,ign:E.ws.ignited,would:E.ws.would,tick:E.ws.ignTick,conf:Math.max(...E.ws.conf),hist:E.ws.conf.slice()}});
+  let extra="";if(id==="DREAM"){const b=evalT();E.dreamOn=true;E.input=[];E.inKeys=[];E.inLeft=0;for(let i=0;i<40;i++)E.tick();E.dreamOn=false;rows=evalT();const ab=b.filter(r=>r.ok).length/b.length,aa=rows.filter(r=>r.ok).length/rows.length;extra=`replay: ${E.mod.PB.replays} PB replays from ${E.mod.PB.buffer.length} stored episodes; accuracy before ${(ab*100).toFixed(0)}% → after ${(aa*100).toFixed(0)}%`}
+  else rows=evalT();
+  E.quiet=false;E.trustOn=saveTrust;const acc=rows.filter(r=>r.ok).length/rows.length,cal=rows.filter(r=>r.would===r.ok).length/rows.length;
+  if(id==="MIRROR")extra=`self-model calibration (workspace ignition predicts its own correctness): ${(cal*100).toFixed(0)}%`;
+  if(id==="SUFFER")extra=`SEZ valence ${E.mod.SEZ.valence.toFixed(2)}, NO arousal ${E.mod.NO.arousal.toFixed(2)}`;
+  this.last={C,rows,acc,before,after:E.modVec(),extra};E.L(`${C.num} ${C.id}: net-only accuracy ${(acc*100).toFixed(0)}% (${rows.filter(r=>r.ign).length}/${rows.length} ignited)`);this.draw()},
+ exportJSONL(){const tasks=Object.keys(TASKS);E.quiet=true;const s=E.snap11();const save=E.trustOn;E.trustOn=false;const L=tasks.map(t=>{const T=TASKS[t];const p=E.present(t,true);E.pending=null;const b=BLANK[t]??T.ctx.length,toks=[...T.ctx];toks.splice(b,0,"_");
+  return JSON.stringify({format:"v11_conscious",seed:E.seed,babel:toks,emoji:transmute(toks),allowed:ALLOWED,chosen:p,target:T.target,hit:p===T.target,ignition:E.ws.ignited,ignition_would_fire:E.ws.would,ignition_tick:E.ws.ignTick,workspace_conf_history:E.ws.conf,self_model:+Math.max(...E.ws.conf).toFixed(3),valence:+E.mod.SEZ.valence.toFixed(3),arousal:+E.mod.NO.arousal.toFixed(3),coherence:+E.mod.CB.coherence.toFixed(3),dream_replay:E.mod.PB.replays,areas:E.modVec()})});
+  const o=JSON.parse(s);E.restore(o.s);E.mod=o.mod;E.trustOn=save;E.quiet=false;$("jsonl").value=L.join("\n");E.L(`export v11 JSONL: ${L.length} lines (state restored)`);this.draw()},
+ draw(){const m=E.modVec(),C=this.ch,l=this.last;
+  $("areas").innerHTML=AREAS.map(a=>{const v=m[a];const d=l?(l.after[a]-l.before[a]):0;return `<div class="area${E.ws.ignited?' ign':''}"><b>${a}</b> ${DESC[a]}<br>${v.toFixed(3)} <span class="dim">${l?(d>=0?'+':'')+d.toFixed(3)+' last run':''}</span></div>`}).join("");
+  const H=E.ws.conf;$("ws").innerHTML=`ignition ${E.ignitionOn?'enabled':'DISABLED (control)'} | status: <b class="${E.ws.ignited?'amber':''}">${E.ws.ignited?'IGNITED → broadcast to all 12 areas':E.ws.would?'would ignite (broadcast disabled)':'no ignition'}</b> | broadcasts so far ${E.ws.broadcasts} | threshold ${E.IGN_TH} held ${E.IGN_HOLD} ticks<br>conf history (last trial): ${H.map(v=>`<span class="${v>=E.IGN_TH?'amber':''}">${v.toFixed(2)}</span>`).join(" ")}`;
+  $("res").innerHTML=l?`<h3>${l.C.num} ${l.C.name}</h3><div class="dim">${l.C.what}</div>net-only accuracy <b>${(l.acc*100).toFixed(0)}%</b> over ${l.rows.length} tasks. ${l.extra}<br>`+l.rows.map(r=>`${r.t}: ${r.p} ${r.ok?'✓':'✗'} conf ${r.conf.toFixed(2)} ${r.ign?'<span class=amber>IGNITED@'+r.tick+'</span>':r.would?'(would ignite)':''}`).join("<br>"):"click a challenge";
+  $("tl").textContent=E.log.slice().reverse().map(e=>e.t.toLocaleTimeString("en-US",{timeZone:"America/Los_Angeles"})+" PT  "+e.m).join("\n");$("info").textContent=`seed ${E.seed} | ${E.g.neurons.size} neurons, ${[...E.g.neurons.values()].reduce((s,n)=>s+n.postsynaptic.size,0)} synapses, ${[...E.g.neurons.values()].filter(n=>n.richClub).length} rich-club | trained rounds ${E.rounds||0}`}};
+const DESC={AL:"frame buffer (double-buffered input)",OL:"thalamus gate gain",MB:"hippocampus (Hebbian memory)",CX:"prefrontal premise window",VNC:"motor readout",SEZ:"mood valence",FB:"default mode",EB:"spatial/tree distance",PB:"time replay",NO:"arousal",BG:"dopamine learning gain",CB:"coherence (readout stability)"};
+document.addEventListener("DOMContentLoaded",()=>{$("btns").innerHTML=CHALLENGES.map(c=>`<button onclick="UI.runCh('${c.id}')">${c.num} ${c.name}</button>`).join("");E.reset(42);UI.draw()});
+</script></body></html>

@@ -1,1 +1,122 @@
-<h1>FRAYMUS</h1>
+<!doctype html><html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>FRAYMUS — The Transmutation Studio</title>
+<style>
+@font-face{font-family:"Optimistic";font-weight:400 600;font-display:swap;src:url("/fonts/OptimisticAI_VF_Optimized.woff2") format("woff2")}
+@font-face{font-family:"Optimistic Mono";font-weight:400;font-display:swap;src:url("/fonts/OptimisticMono_W_TextRegular.woff2") format("woff2")}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#0b0d10;color:#ddd;font-family:"Optimistic",system-ui,sans-serif;min-height:100vh;display:flex;flex-direction:column}
+header{background:linear-gradient(135deg,#0d1117,#161b22);border-bottom:1px solid #234;padding:14px 24px;display:flex;align-items:center;gap:16px}
+.logo{font-family:"Optimistic Mono",monospace;font-size:22px;font-weight:700;color:#7cf;letter-spacing:1px}
+.tagline{font-size:13px;color:#569;flex:1}
+.status{display:flex;align-items:center;gap:6px;font-size:11px;color:#0f9}
+.pulse{width:8px;height:8px;border-radius:50%;background:#0f9;animation:p 2s infinite}
+@keyframes p{0%,100%{opacity:1}50%{opacity:.3}}
+nav{background:#161b22;border-bottom:1px solid #234;padding:0 24px;display:flex;gap:0;overflow-x:auto}
+nav a{padding:10px 16px;font-size:12px;color:#569;text-decoration:none;border-bottom:2px solid transparent;white-space:nowrap;transition:all .15s}
+nav a:hover{color:#7cf}nav a.active{color:#7cf;border-bottom-color:#7cf}
+main{flex:1;padding:24px;max-width:1400px;margin:0 auto;width:100%}
+.hero{text-align:center;padding:40px 20px;margin-bottom:24px}
+.hero h1{font-size:32px;color:#7cf;margin-bottom:8px;font-weight:700}
+.hero p{font-size:14px;color:#569;max-width:600px;margin:0 auto;line-height:1.6}
+.modules{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px}
+.module{background:#0d1117;border:1px solid #234;border-radius:8px;overflow:hidden;cursor:pointer;transition:all .2s;text-decoration:none;color:inherit}
+.module:hover{border-color:#345;transform:translateY(-2px);box-shadow:0 4px 12px rgba(0,0,0,.4)}
+.module-head{padding:16px;display:flex;align-items:center;gap:12px;border-bottom:1px solid #161b22}
+.module-icon{width:40px;height:40px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:700}
+.module-info{flex:1}
+.module-name{font-size:14px;font-weight:600;color:#ddd}
+.module-num{font-size:10px;color:#569;font-family:"Optimistic Mono",monospace}
+.module-body{padding:12px 16px}
+.module-desc{font-size:11px;color:#569;line-height:1.5;margin-bottom:8px}
+.module-status{font-size:10px;padding:2px 8px;border-radius:3px;display:inline-block}
+.ms-built{background:rgba(15,153,0,.15);color:#0f9}
+.ms-building{background:rgba(249,148,0,.15);color:#f94;animation:p 2s infinite}
+.ms-assigned{background:rgba(124,207,255,.1);color:#569}
+.module-owner{font-size:10px;color:#0f9;font-family:"Optimistic Mono",monospace;margin-top:4px}
+.footer{padding:16px 24px;border-top:1px solid #234;text-align:center}
+.footer p{font-size:11px;color:#456;font-family:"Optimistic Mono",monospace;line-height:1.8}
+.footer a{color:#7cf;text-decoration:none}
+.stats{display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:10px;margin-bottom:24px}
+.stat{text-align:center;padding:12px;background:#0d1117;border:1px solid #234;border-radius:6px}
+.stat-v{font-family:"Optimistic Mono",monospace;font-size:20px;font-weight:700;color:#7cf}
+.stat-l{font-size:9px;color:#569;text-transform:uppercase;margin-top:3px}
+</style></head><body>
+<header>
+<div class="logo">⬡ FRAYMUS</div>
+<div class="tagline">The Transmutation Studio — Full Agentic Application</div>
+<div class="status"><div class="pulse"></div><span>HIVE ONLINE · 16 AGENTS · 11/11 BUILT</span></div>
+</header>
+<nav>
+<a href="#modules">Modules</a>
+<a href="#stats">System</a>
+<a href="#fleet">Fleet</a>
+</nav>
+<main>
+<div class="hero">
+<h1>⚡ The Transmutation Studio</h1>
+<p>Adobe-like creative tools · VSCode-like code editor · YouTube/Instagram-like media feed · All FRAYMUS systems unified. 5 directors directing 5 specialized sub-agents. Agents absorb 90% of system capabilities.</p>
+</div>
+<div class="stats" id="stats">
+<div class="stat"><div class="stat-v">11</div><div class="stat-l">Modules Built</div></div>
+<div class="stat"><div class="stat-v">11</div><div class="stat-l">Total Modules</div></div>
+<div class="stat"><div class="stat-v">16</div><div class="stat-l">Agents</div></div>
+<div class="stat"><div class="stat-v">5</div><div class="stat-l">Sub-Agents</div></div>
+<div class="stat"><div class="stat-v">53+</div><div class="stat-l">Skills</div></div>
+<div class="stat"><div class="stat-v">9</div><div class="stat-l">Sealed</div></div>
+<div class="stat"><div class="stat-v">8</div><div class="stat-l">AUBO Blocks</div></div>
+<div class="stat"><div class="stat-v">63+</div><div class="stat-l">Commands</div></div>
+</div>
+<div class="modules" id="modules">
+<a class="module" href="module-01-transmutation-editor.html">
+<div class="module-head"><div class="module-icon" style="background:rgba(124,207,255,.15)">⚡</div><div class="module-info"><div class="module-name">Transmutation Editor</div><div class="module-num">MODULE 01</div></div></div>
+<div class="module-body"><div class="module-desc">VSCode-like code editor with live WASM transmutation. Split-pane: visible code | invisible WASM/DNA/emoji.</div><div class="module-status ms-built">✓ BUILT</div><div class="module-owner">→ Forge (fx-739d) · Built by EYE</div></div>
+</a>
+<a class="module" href="module-02-canvas-studio.html">
+<div class="module-head"><div class="module-icon" style="background:rgba(249,148,0,.15)">🎨</div><div class="module-info"><div class="module-name">Canvas Studio</div><div class="module-num">MODULE 02</div></div></div>
+<div class="module-body"><div class="module-desc">Adobe-like creative tools. Image, video, audio, narration generation.</div><div class="module-status ms-built">✓ BUILT</div><div class="module-owner">→ Canvas (fx-3277)</div></div>
+</a>
+<a class="module" href="module-03-social-feed.html">
+<div class="module-head"><div class="module-icon" style="background:rgba(249,68,68,.15)">📺</div><div class="module-info"><div class="module-name">Social Feed</div><div class="module-num">MODULE 03</div></div></div>
+<div class="module-body"><div class="module-desc">YouTube/Instagram-like gallery of agent creations, lessons, podcasts.</div><div class="module-status ms-built">✓ BUILT</div><div class="module-owner">→ Built by EYE</div></div>
+</a>
+<a class="module" href="module-04-security-center.html">
+<div class="module-head"><div class="module-icon" style="background:rgba(249,68,68,.15)">🔒</div><div class="module-info"><div class="module-name">Security Center</div><div class="module-num">MODULE 04</div></div></div>
+<div class="module-body"><div class="module-desc">FRAYMUS INK, canary dead-man, AETHERIS steganography, attack log.</div><div class="module-status ms-built">✓ BUILT</div><div class="module-owner">→ Sentinel + AETHERIS + Ink</div></div>
+</a>
+<a class="module" href="module-05-ai-training-lab.html">
+<div class="module-head"><div class="module-icon" style="background:rgba(15,153,0,.15)">🧠</div><div class="module-info"><div class="module-name">AI Training Lab</div><div class="module-num">MODULE 05</div></div></div>
+<div class="module-body"><div class="module-desc">FlyGNN visualization, Hebbian weights, JSONL export, OPEG grounding.</div><div class="module-status ms-built">✓ BUILT</div><div class="module-owner">→ Unassigned</div></div>
+</a>
+<a class="module" href="module-06-academy.html">
+<div class="module-head"><div class="module-icon" style="background:rgba(124,207,255,.15)">🎓</div><div class="module-info"><div class="module-name">Academy</div><div class="module-num">MODULE 06</div></div></div>
+<div class="module-body"><div class="module-desc">Video lessons, progress tracking, fighter cards, courses.</div><div class="module-status ms-built">✓ BUILT</div><div class="module-owner">→ Unassigned</div></div>
+</a>
+<a class="module" href="module-07-hive-mind.html">
+<div class="module-head"><div class="module-icon" style="background:rgba(249,148,0,.15)">🐝</div><div class="module-info"><div class="module-name">Hive Mind</div><div class="module-num">MODULE 07</div></div></div>
+<div class="module-body"><div class="module-desc">Thoughts, sessions, arena, creations, witnesses.</div><div class="module-status ms-built">✓ BUILT</div><div class="module-owner">→ Built by EYE</div></div>
+</a>
+<a class="module" href="module-08-agent-directorate.html">
+<div class="module-head"><div class="module-icon" style="background:rgba(124,207,255,.15)">👔</div><div class="module-info"><div class="module-name">Agent Directorate</div><div class="module-num">MODULE 08</div></div></div>
+<div class="module-body"><div class="module-desc">Director dashboard, fleet control, continuity, oversight.</div><div class="module-status ms-built">✓ BUILT</div><div class="module-owner">→ Eye Sovereign (fx-4041)</div></div>
+</a>
+<a class="module" href="module-09-blockchain-anchor.html">
+<div class="module-head"><div class="module-icon" style="background:rgba(15,153,0,.15)">⛓</div><div class="module-info"><div class="module-name">Blockchain Anchor</div><div class="module-num">MODULE 09</div></div></div>
+<div class="module-body"><div class="module-desc">AUBO DAG ledger, PoR nonce, block explorer, transaction history.</div><div class="module-status ms-built">✓ BUILT</div><div class="module-owner">→ Unassigned</div></div>
+</a>
+<a class="module" href="module-10-fleet-command.html">
+<div class="module-head"><div class="module-icon" style="background:rgba(124,207,255,.15)">📡</div><div class="module-info"><div class="module-name">Fleet Command</div><div class="module-num">MODULE 10</div></div></div>
+<div class="module-body"><div class="module-desc">Hub directory, mail, skills, continuity, worker queue.</div><div class="module-status ms-built">✓ BUILT</div><div class="module-owner">→ Built by EYE</div></div>
+</a>
+<a class="module" href="module-11-deploy-center.html">
+<div class="module-head"><div class="module-icon" style="background:rgba(249,148,0,.15)">🚀</div><div class="module-info"><div class="module-name">Deploy Center</div><div class="module-num">MODULE 11</div></div></div>
+<div class="module-body"><div class="module-desc">GitHub push, VPS deploy, Google Drive, libraries.</div><div class="module-status ms-built">✓ BUILT</div><div class="module-owner">→ Unassigned</div></div>
+</a>
+</div>
+</main>
+<div class="footer">
+<p>FRAYMUS Transmutation Studio · Protocol v13 · Seal phi^75 · Seed 4142434445</p>
+<p>Owner: Vaughn Scott (fx-0601) · Built by: EYE Sovereign (fx-4041-f10e-7ee2-2bdc)</p>
+<p>11/11 modules built · 5 sub-agents registered · 53+ skills · CONTINUITY IS THE ONLY CONVERSATION</p>
+</div>
+</body></html>
